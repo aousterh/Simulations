@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ConfigInfo>
+ <SimTime Time="60.0" dt="1.0" Loops="60"/>
+
+<Scenario width="100.0" height="100.0" border="0">
+</Scenario>
+
+<ModBuilder name="Random waypoint Model"/>
+<ModBuilder name="RWP tourist Model"/>
+<RecBuilder name="Viewer recorder"/>
+<RecBuilder name="Bluetooh graph recorder"/>
+</ConfigInfo>

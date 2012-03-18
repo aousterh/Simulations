@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Info>
+<nn>10</nn>
+<nr>1.0</nr>
+<ar>10.0</ar>
+<vMin>1.0</vMin>
+<vMax>1.0</vMax>
+<pauseTime>1.0</pauseTime>
+<isPhy>false</isPhy>
+
+</Info>
