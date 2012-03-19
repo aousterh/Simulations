@@ -5,3 +5,4 @@ momose/configs/*
 momose/logs/*
 momose/output/*
 momose/scenarios/*
+*.DS_Store
