@@ -1,0 +1,13 @@
+This directory currently contains my modified version of one simulation platform (Momose). In the future, it may contain other code as well.
+
+
+MOMOSE
+-First create directories to store the output of Momose. If you call them "momose/configs", "momose/logs", "momose/output" and "momose/scenarios", they will automatically not be tracked by git. If you're going to check in code and you want to call them something else, make sure that you add those directories to the .gitignore file so that they will not clutter the repository!! Also then you should add your .gitignore file to the .gitignore file so that it will not overwrite the one in the repository.
+
+-To compile, from the "momose" directory:
+	javac -classpath ./src:./lib/gluegen-rt:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
+
+-To run, from the "momose" directory:
+	java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=/lib gui.Momose -d32
+
+-When you run momose the first time, set your preferences to place your output files in the directories that you created. This can be done by navigating to File->Preferences.

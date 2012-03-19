@@ -1,1 +1,7 @@
 *.class
+*~
+momose/momosepref.xml
+momose/configs/*
+momose/logs/*
+momose/output/*
+momose/scenarios/*

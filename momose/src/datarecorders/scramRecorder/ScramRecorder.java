@@ -35,7 +35,8 @@ public class ScramRecorder extends DataRecorder
         nodes=new Vector();  
         ps=null;
         fos=null;
-        outputFilePath="."+File.separator+"scramRecorderOutput.csv";
+        outputFilePath = "." + File.separator + "scramRecorderOutput.csv";
+        System.out.println("path: " + outputFilePath);
         compressOutput=false;
     }//end constructor
     
@@ -75,6 +76,7 @@ public class ScramRecorder extends DataRecorder
     {
         //create the CSV file to save the simulation
         try{
+            System.out.println("path: " + outputFilePath);
             fos=new FileOutputStream(outputFilePath);
             ps=new PrintStream(fos);
         } 
