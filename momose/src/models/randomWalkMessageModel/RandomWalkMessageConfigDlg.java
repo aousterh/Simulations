@@ -1,4 +1,4 @@
-package models.simpleModelStructures;
+package models.randomWalkMessageModel;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -9,18 +9,18 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import models.ModelConfigDlg;
+import models.messageModel.MessageModelConfigDlg;
 
-public class SimpleModelConfigDlg extends ModelConfigDlg
+public class RandomWalkMessageConfigDlg extends ModelConfigDlg
 {
     protected JSpinner spinnerVMin;
     protected JSpinner spinnerVMax;
     protected JSpinner spinnerPauseTime; 
     
-    public SimpleModelConfigDlg(String name)
+    public RandomWalkMessageConfigDlg()
     {
         setSize(350,220);  
-        setTitle(name+" config dialog");
+        setTitle("Random Walk Message model config dialog");
     }//Fine costruttore
     
     public void setVMin(float v)

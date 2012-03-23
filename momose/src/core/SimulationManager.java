@@ -26,6 +26,7 @@ import models.ecraModel.EcraModelBuilder;
 import models.hotSpotModel.HotSpotModelBuilder;
 import models.nomadicModel.NomadicModelBuilder;
 import models.pursueModel.PursueModelBuilder;
+import models.randomWalkMessageModel.RandomWalkMessageModelBuilder;
 import models.randomWalkModel.RandomWalkModelBuilder;
 import models.randomWaypointModel.RandomWaypointModelBuilder;
 import models.rwpTouristModel.RWPTouristModelBuilder;
@@ -441,6 +442,7 @@ private SimulationWnd createSimFromFile(File cfgFile)
  Vector modelsBuilders=new Vector();  
  
  //Random Walk Model
+ modelsBuilders.add(new RandomWalkMessageModelBuilder("Random Walk Message Model"));
  modelsBuilders.add(new RandomWalkModelBuilder("Random walk Model"));
  modelsBuilders.add(new RandomWaypointModelBuilder("Random waypoint Model")); 
  modelsBuilders.add(new EcraModelBuilder("ECRA Model")); 
