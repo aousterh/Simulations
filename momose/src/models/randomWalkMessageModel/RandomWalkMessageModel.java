@@ -27,6 +27,8 @@ public class RandomWalkMessageModel extends MessageModel
                          float pauseTime, float vMin, float vMax,
                          boolean isPhysical)
     {
+        super.setModel(antennaRadius);
+        
         this.numNodes = numNodes;
         this.nodeRadius = nodeRadius;
         this.antennaRadius = antennaRadius;
@@ -47,7 +49,7 @@ public class RandomWalkMessageModel extends MessageModel
         
         Point2d initialPos = new Point2d(px, py);
         RandomWalkMessageNode messageNode = 
-            new RandomWalkMessageNode(initialPos, nodeRadius, lastNodeId, time); 
+            new RandomWalkMessageNode(initialPos, nodeRadius, lastNodeId, time);
         
         return messageNode;
     }

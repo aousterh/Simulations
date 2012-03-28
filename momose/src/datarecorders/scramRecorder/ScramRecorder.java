@@ -15,6 +15,8 @@ import datarecorders.DataRecorder;
 import math.Point2d;
 import models.Model;
 import models.Node;
+import models.messageModel.MessageData;
+import models.messageModel.MessageNode;
 
 import engine.Scenario;
 import engine.SimTime;
@@ -28,6 +30,8 @@ public class ScramRecorder extends DataRecorder
     private PrintStream ps;
     private FileOutputStream fos;
     private boolean compressOutput;
+    
+    public final String COMMA = ", ";
     
     
     public ScramRecorder()
@@ -48,29 +52,29 @@ public class ScramRecorder extends DataRecorder
     
     public void setup(Vector models, Scenario scenario, SimTime time) 
     {
-        //create the list of nodes
+        // create the list of nodes
         setupNodes(models);  
         
-        //create the file to store data (CSV by default)
+        // create the file to store data (CSV by default)
         createCsvFile(time);
         
-        //write static info to the file
+        // write static info to the file
         writeStaticInfo(time, scenario);
         
-        //get a reference to time
+        // get a reference to time
         this.simTime=time; 
-    }//end setup
+    } // end setup
     
     private void setupNodes(Vector models)
     {
-        Iterator i=models.iterator();
+        Iterator i = models.iterator();
         while(i.hasNext())
         {
-            //Pull the nodes from the model
+            // Pull the nodes from the model
             Model nextModel=(Model)i.next();
             nodes.addAll(nextModel.getNodes());
         } 
-    }//end setupNodes
+    } // end setupNodes
     
     private void createCsvFile(SimTime time)
     {
@@ -100,7 +104,7 @@ public class ScramRecorder extends DataRecorder
         ps.println("Nodes: " + nodes.size());
         
         //Write the column headers
-        ps.println("time, xpos, ypos\n");
+        ps.println("time" + COMMA + "id" + COMMA + "xpos" + COMMA + "ypos\n");
     }//end writeBaseNodeInfo
     
     public void record(SimTime time) 
@@ -116,28 +120,32 @@ public class ScramRecorder extends DataRecorder
         
         for(int i=0;i<nodes.size();i++)
         {
-            Node nextNode=(Node)nodes.elementAt(i);  
+            MessageNode nextNode = (MessageNode) nodes.elementAt(i);  
             
             Point2d pos=nextNode.getPosition();
             
             //Write the position in the file
-            ps.print(time + ", " + pos.x + ", " + pos.y + "\n");
+            ps.print(time + COMMA + nextNode.getNodeId() + COMMA + pos.x + COMMA + 
+                     pos.y + "\n");
             
         }   
     }//end writeNodeInfo
     
     public void close()
     {
-        //Write the time info
-        ps.println(simTime.toString()); 
+        // Write the time info
+        ps.println(simTime.toString());
         
-        //Close the file
+        // Write the message info
+        writeMessageInfo();
+        
+        // Close the file
         try
         {fos.close();} 
         catch (IOException e) 
         {e.printStackTrace();}  
         
-        //Compress the file
+        // Compress the file
         if(compressOutput==true)
         { 
             File normalFile=new File(outputFilePath); 
@@ -150,5 +158,30 @@ public class ScramRecorder extends DataRecorder
             }
             
         } 
-    }//end close 
-}//end Class ScramRecorder
+    } // end close 
+    
+    private void writeMessageInfo()
+    {
+        ps.print("node id" + COMMA + "num messages" + COMMA + "message id" + COMMA +
+                 "latency" + COMMA + "creation time\n");
+        
+        Iterator it = nodes.iterator();
+        while (it.hasNext())
+        {
+            MessageNode node = (MessageNode) it.next();
+            
+            // Write node info to the file
+            ps.print(node.getNodeId() + COMMA + node.numReceivedMessages() + "\n");
+            
+            // Write rest of message info
+            for (int i = 0; i < node.numTotalMessages(); i++) {
+                MessageData msg = node.getMessage(i);
+                if (!msg.wasOutgoing()){
+                    ps.print(COMMA + COMMA + msg.getUuid() + COMMA + msg.getLatency() +
+                             COMMA + msg.getCreationTime() + "\n");
+                }
+            }
+        }
+    }
+
+}// end Class ScramRecorder

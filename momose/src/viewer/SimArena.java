@@ -12,8 +12,8 @@ public abstract class SimArena extends JPanel
  {
   //Coordinate di simulazione
   protected float sWidth;
-  protected float sHeight;	
-	
+  protected float sHeight; 
+ 
   //Scala dell'arena
   protected float scale;
   
@@ -21,7 +21,7 @@ public abstract class SimArena extends JPanel
   protected Scenario scenario;
   protected ScenarioElement[] scenElemArray;
   protected Vector nodes;
-	    
+     
   //Variabili dell'arena
   protected boolean drawAntennaRadius;
   protected boolean drawGraph;
@@ -37,79 +37,79 @@ public abstract class SimArena extends JPanel
     this.sHeight=100;
     
     //Impostazioni vettori di visualizzazione
-	scenario=null;
-	scenElemArray=new ScenarioElement[0];
-	nodes=new Vector();
-	
-	//Variabili dell'arena
-	drawAntennaRadius=false;
-	drawGraph=false;
-	drawHotSpot=false;
-	drawNodeId=false;
+ scenario=null;
+ scenElemArray=new ScenarioElement[0];
+ nodes=new Vector();
+ 
+ //Variabili dell'arena
+ drawAntennaRadius=false;
+ drawGraph=false;
+ drawHotSpot=false;
+ drawNodeId=false;
    }//Fine costruttore
   
   public void setScenario(Scenario scenario)
    {
-	this.scenario=scenario;
-	setSimDimension(scenario.getWidth(),scenario.getHeight());
-	setScenElementArray(scenario);
-	
-	//Setto la scala iniziale
-	//setInitialScale();
-     	
+ this.scenario=scenario;
+ setSimDimension(scenario.getWidth(),scenario.getHeight());
+ setScenElementArray(scenario);
+ 
+ //Setto la scala iniziale
+ //setInitialScale();
+      
     //Applico i cambiamenti
-	applyChange();
+ applyChange();
    }//Fine setScenario
   
   private void setScenElementArray(Scenario scenario) 
    {
-	//Conto il numero di elementi totali  
-	int countElem=scenario.getBuildings().size();
-	countElem+=scenario.getHotSpots().size();
-	countElem+=scenario.getTexts().size();
-	
-	//Creo l'array degli elelemnti dello scenario
-	scenElemArray=new ScenarioElement[countElem];
-	
-	int count=0;
-	//Riempo l'array con i building
-	Iterator i=scenario.getBuildings().iterator();
-	count=addArrayElem(i,count);
-	
+ //Conto il numero di elementi totali  
+ int countElem=scenario.getBuildings().size();
+ countElem+=scenario.getHotSpots().size();
+ countElem+=scenario.getTexts().size();
+ 
+ //Creo l'array degli elelemnti dello scenario
+ scenElemArray=new ScenarioElement[countElem];
+ 
+ int count=0;
+ //Riempo l'array con i building
+ Iterator i=scenario.getBuildings().iterator();
+ count=addArrayElem(i,count);
+ 
     //Riempo l'array con gli hotSpot
-	i=scenario.getHotSpots().iterator();
-	count=addArrayElem(i,count);
-	
+ i=scenario.getHotSpots().iterator();
+ count=addArrayElem(i,count);
+ 
     //Riempo l'array con i testi
-	i=scenario.getTexts().iterator();
-	count=addArrayElem(i,count);	
+ i=scenario.getTexts().iterator();
+ count=addArrayElem(i,count); 
   }//Fine SetScenElementArray
  
 private int addArrayElem(Iterator i,int count)
  {
   while(i.hasNext())
   {
-	ScenarioElement nextElem=(ScenarioElement)i.next();
-	scenElemArray[count]=nextElem;
-	count++;
-  }		
- return count;	
+ ScenarioElement nextElem=(ScenarioElement)i.next();
+ scenElemArray[count]=nextElem;
+ count++;
+  }  
+ return count; 
 }//Fine addArrayElem
   
   public void setNodes(Vector nodes)
    { 
-	this.nodes=nodes;
-	
-	//Assegno gli Id ai nodi
-	int count=1;
-	Iterator i=nodes.iterator();
-	while(i.hasNext())
-	 {
-	  GraphNode node=(GraphNode)i.next();
-	  //Disegno il nodo
-	  node.setId(count);
-	  count++;
-	 }		 
+ this.nodes=nodes;
+ 
+ //Assegno gli Id ai nodi
+ int count=1;
+ Iterator i=nodes.iterator();
+ while(i.hasNext())
+  {
+   GraphNode node=(GraphNode)i.next();
+   //Disegno il nodo
+   node.setId(count);
+   count++;
+  }   
   }//Fine setNodes
  
   public void setSimDimension(float width,float height)

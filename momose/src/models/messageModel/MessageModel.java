@@ -17,9 +17,15 @@ public abstract class MessageModel extends Model
     protected float antennaRadius;
     protected boolean isPhysical;
     protected int lastNodeId = -1;  // last used node id
-    protected int EXCHANGE_DISTANCE = 5; // should read this in from parser??
+    protected float EXCHANGE_DISTANCE; // should read this in from parser??
     
     // extensions should create whatever contructor and setModel they need
+    public void setModel(float exchangeDistance)
+    {
+        EXCHANGE_DISTANCE = exchangeDistance;
+        System.out.println("exchange distance: " + EXCHANGE_DISTANCE);
+    }
+    
     
     public void setup(Scenario scenario, SimTime time) 
     { 
@@ -32,8 +38,6 @@ public abstract class MessageModel extends Model
     }
 
     // create a node, as specified by this mobility model
-    // extensions of this MUST call super after they have finished their
-    // work
     public MessageNode CreateMessageNode(Scenario scenario, SimTime time) {
         lastNodeId++;
         return null;
@@ -48,7 +52,7 @@ public abstract class MessageModel extends Model
             for (int j = i + 1; j < numNodes; j++) 
             {
                 MessageNode node2 = (MessageNode) nodes.elementAt(j);
-                if (node1.distanceTo(node2) >= EXCHANGE_DISTANCE) {
+                if (node1.distanceTo(node2) <= EXCHANGE_DISTANCE) {
                     node1.exchangeWith(node2);
                     node2.exchangeWith(node1);
                 }
