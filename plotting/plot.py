@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 fig1 = plt.figure()
 sub1 = fig1.add_subplot(211)
 
-r = mlab.csv2rec("test_data.csv")
+r = mlab.csv2rec("../momose/output/scramRecorderOutput.csv", skiprows=3)
 x = r.latency
 
 n, bins, patches = sub1.hist(x, 5, normed=1, cumulative=False, histtype='bar', alpha=0.75)

@@ -104,13 +104,13 @@ public class ScramRecorder extends DataRecorder
         ps.println("Nodes: " + nodes.size());
         
         //Write the column headers
-        ps.println("time" + COMMA + "id" + COMMA + "xpos" + COMMA + "ypos\n");
+   //     ps.println("time" + COMMA + "id" + COMMA + "xpos" + COMMA + "ypos\n");
     }//end writeBaseNodeInfo
     
     public void record(SimTime time) 
     {
         //Write the node info
-        writeNodeInfo(time);
+    //    writeNodeInfo(time);
         
     }//end record
     
@@ -158,12 +158,13 @@ public class ScramRecorder extends DataRecorder
             }
             
         } 
-    } // end close 
+    } // end close
     
     private void writeMessageInfo()
     {
-        ps.print("node id" + COMMA + "num messages" + COMMA + "message id" + COMMA +
-                 "latency" + COMMA + "creation time\n");
+     /*   ps.print("node id" + COMMA + "num messages" + COMMA + "message id" + COMMA +
+                 "latency" + COMMA + "creation time\n"); */
+      ps.print("latency\n");
         
         Iterator it = nodes.iterator();
         while (it.hasNext())
@@ -171,14 +172,15 @@ public class ScramRecorder extends DataRecorder
             MessageNode node = (MessageNode) it.next();
             
             // Write node info to the file
-            ps.print(node.getNodeId() + COMMA + node.numReceivedMessages() + "\n");
+   //         ps.print(node.getNodeId() + COMMA + node.numReceivedMessages() + "\n");
             
             // Write rest of message info
             for (int i = 0; i < node.numTotalMessages(); i++) {
                 MessageData msg = node.getMessage(i);
                 if (!msg.wasOutgoing()){
-                    ps.print(COMMA + COMMA + msg.getUuid() + COMMA + msg.getLatency() +
-                             COMMA + msg.getCreationTime() + "\n");
+                /*    ps.print(COMMA + COMMA + msg.getUuid() + COMMA + msg.getLatency() +
+                             COMMA + msg.getCreationTime() + "\n");*/
+                  ps.print(msg.getLatency() + "\n");
                 }
             }
         }
