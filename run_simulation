@@ -1,0 +1,18 @@
+#---------------------------------------------------------
+# run_simulation
+# Author: Amy Ousterhout
+#---------------------------------------------------------
+
+#---------------------------------------------------------
+# This script compiles and runs the momose simulation.
+#
+#---------------------------------------------------------
+
+cd momose
+javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
+java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
+cd ..
+
+cd plotting
+python plot.py
+cd ..
