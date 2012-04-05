@@ -1,5 +1,6 @@
 *.class
 *~
+*.o
 momose/momosepref.xml
 momose/configs/*
 momose/logs/*
