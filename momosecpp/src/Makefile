@@ -3,7 +3,7 @@ CC=g++
 CFLAG=
 
 #Definizione variabili personalizzate
-BASEDIR=/Users/Amy/Documents/Junior_Year/COS_398/Simulations/momosecpp
+BASEDIR=/u/aousterh/IndependentWork/Simulations/momosecpp
 SRCDIR=$(BASEDIR)/src
 HDRDIR=$(SRCDIR)/include
 BINDIR=$(BASEDIR)/bin

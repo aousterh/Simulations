@@ -11,7 +11,7 @@ ViewerRecorder::ViewerRecorder(): outputFile()
   setName("ViewerRecorder");	
   nodes=new vector<Node*>();
   simTime=NULL;
-  outputFilePath="/home/stefano/Desktop/simulazioni/viewerRecorderOutput.xml";
+  outputFilePath="/u/aousterh/IndependentWork/Simulations/momosecpp/output/viewerRecorderOutput.xml";
   compressOutput=false;
  }//Fine costruttori
 
@@ -69,6 +69,7 @@ void ViewerRecorder::createXmlFile(SimTime *simTime)
    outputFile.open(filePathVect,ios::out); 
    if(!outputFile)
     {
+      cerr<<outputFilePath;
      cerr<<"\nERROR: Impossible to open file... Simulation aborted!!! ";
      exit(1);
     }
