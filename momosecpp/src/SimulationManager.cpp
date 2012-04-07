@@ -8,7 +8,7 @@
 #include"ViewerRecorder.h"
 #include"BaseParser.h"
 
-
+#include"RandomWalkMessageModelBuilder.h"
 #include"RandomWalkModelBuilder.h"
 #include"RandomWaypointModelBuilder.h"
 #include"PursueModelBuilder.h"
@@ -299,6 +299,7 @@ vector<DataRecorder*>* SimulationManager::getRecorders(vector<DataRecorderBuilde
 ////////////////////////////////////////////////////////////////////  
 void SimulationManager::setModelBuilders()
    {
+     modelsBuilders->push_back(new RandomWalkMessageModelBuilder("Random Walk Message Model"));
      modelsBuilders->push_back(new RandomWalkModelBuilder("Random walk Model"));
      modelsBuilders->push_back(new RandomWaypointModelBuilder("Random waypoint Model")); 
      modelsBuilders->push_back(new EraModelBuilder("ERA Model")); 

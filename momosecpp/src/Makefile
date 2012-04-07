@@ -25,7 +25,9 @@ MODELSOBJS=RandomWalkModelBuilder.o RandomWalkModel.o RandomWalkNode.o \
            PursueModelParser.o PursueModel.o PursueNode.o PursueModelBuilder.o\
            NomadicModelParser.o NomadicModelBuilder.o NomadicModel.o NomadicNode.o \
            EraModelParser.o EraModelBuilder.o EraModel.o EraNode.o \
-           SimpleModel.o SimpleNode.o SimpleModelParser.o    
+           SimpleModel.o SimpleNode.o SimpleModelParser.o \
+	   MessageModel.o MessageNode.o MessageData.o \
+	   RandomWalkMessageModelBuilder.o RandomWalkMessageModel.o RandomWalkMessageNode.o
 	   
 
 DATARECORDERSOBJS= ViewerRecorder.o ViewerRecorderParser.o ViewerRecorderBuilder.o \
