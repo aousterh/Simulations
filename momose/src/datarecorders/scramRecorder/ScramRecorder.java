@@ -164,7 +164,7 @@ public class ScramRecorder extends DataRecorder
     {
      /*   ps.print("node id" + COMMA + "num messages" + COMMA + "message id" + COMMA +
                  "latency" + COMMA + "creation time\n"); */
-      ps.print("latency\n");
+      ps.print("uuid" + COMMA + "latency\n");
         
         Iterator it = nodes.iterator();
         while (it.hasNext())
@@ -180,7 +180,7 @@ public class ScramRecorder extends DataRecorder
                 if (!msg.wasOutgoing()){
                 /*    ps.print(COMMA + COMMA + msg.getUuid() + COMMA + msg.getLatency() +
                              COMMA + msg.getCreationTime() + "\n");*/
-                  ps.print(msg.getLatency() + "\n");
+                  ps.print(msg.getUuid() + COMMA + msg.getLatency() + "\n");
                 }
             }
         }

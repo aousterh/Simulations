@@ -6,4 +6,5 @@ momose/configs/*
 momose/logs/*
 momose/output/*
 momose/scenarios/*
+plotting/graphs/*
 *.DS_Store
