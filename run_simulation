@@ -9,7 +9,7 @@
 #---------------------------------------------------------
 
 cd momose
-#javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
+javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
 java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
 cd ..
 

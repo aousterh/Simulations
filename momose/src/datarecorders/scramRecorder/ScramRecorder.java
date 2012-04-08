@@ -130,7 +130,7 @@ public class ScramRecorder extends DataRecorder
             
         }   
     }//end writeNodeInfo
-    
+  
     public void close()
     {
         // Write the time info

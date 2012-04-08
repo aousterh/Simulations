@@ -15,7 +15,6 @@ public abstract class MessageModel extends Model
     protected int numNodes;
     protected float nodeRadius;
     protected float antennaRadius;
-    protected boolean isPhysical;
     protected int lastNodeId = -1;  // last used node id
     protected float EXCHANGE_DISTANCE; // should read this in from parser??
     
@@ -23,7 +22,7 @@ public abstract class MessageModel extends Model
     public void setModel(float exchangeDistance)
     {
         EXCHANGE_DISTANCE = exchangeDistance;
-        System.out.println("exchange distance: " + EXCHANGE_DISTANCE);
+      //  System.out.println("exchange distance: " + EXCHANGE_DISTANCE);
     }
     
     
