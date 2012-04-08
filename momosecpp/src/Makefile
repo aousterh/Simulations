@@ -31,6 +31,7 @@ MODELSOBJS=RandomWalkModelBuilder.o RandomWalkModel.o RandomWalkNode.o \
 	   
 
 DATARECORDERSOBJS= ViewerRecorder.o ViewerRecorderParser.o ViewerRecorderBuilder.o \
+	   MessageRecorder.o MessageRecorderBuilder.o
 
 
 #Definizione dei file oggetto

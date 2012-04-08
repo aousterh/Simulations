@@ -3,7 +3,8 @@
 
 #include"Utils.h"
 
-
+#include"MessageRecorderBuilder.h"
+#include"MessageRecorder.h"
 #include"ViewerRecorderBuilder.h"
 #include"ViewerRecorder.h"
 #include"BaseParser.h"
@@ -313,6 +314,7 @@ void SimulationManager::setModelBuilders()
   void SimulationManager::setRecorderBuilders()
    {
      recordersBuilders->push_back(new ViewerRecorderBuilder("Viewer recorder"));  
+     recordersBuilders->push_back(new MessageRecorderBuilder("Message recorder"));  
      //recordersBuilders->push_back(new DebugRecorderBuilder("Debug recorder")); 
      //Insert here new DataRecorderBuilder
 	//recoredersBuilder->push_back(new NewDataRecorderBuilder());  

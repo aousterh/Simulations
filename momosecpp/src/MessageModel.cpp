@@ -27,7 +27,7 @@ void MessageModel::setup(Scenario *scenario, SimTime *time)
 void MessageModel::think(SimTime *time)
 {
   // see if any nodes can exchange messages
-  // with current implementation, nodes can travel a long way in one time step if
+  // with current implementation, message can travel a long way in one time step if
   // several nodes are connected :-/
   for (int i = 0; i < numNodes - 1; i++)
     {

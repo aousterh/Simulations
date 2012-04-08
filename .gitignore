@@ -10,4 +10,5 @@ plotting/graphs/*
 momosecpp/output/*
 momosecpp/configs/*
 momosecpp/src/momose
+scripts/pbs_script.*
 *.DS_Store

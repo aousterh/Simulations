@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# This is a script to run a simple simulation.
+#
+#PBS -l nodes=1:ppn=1,walltime=0:00:01
+#PBS -M aousterh@princeton.edu
+#PBS -m abe
+#PBS -j oe
+
+cd /u/aousterh/IndependentWork/Simulations/momosecpp/src
+pwd
+export LD_LIBRARY_PATH=/u/aousterh/IndependentWork/Simulations/momosecpp/extlibs/expat/libs
+echo $LD_LIBRARY_PATH
+ls -l /u/aousterh/IndependentWork/Simulations/momosecpp/extlibs/expat/lib/
+date
+./momose -f /u/aousterh/IndependentWork/Simulations/momosecpp/configs/RWM_config
+date
