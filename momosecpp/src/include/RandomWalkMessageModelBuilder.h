@@ -4,13 +4,13 @@
 #include<iostream>
 #include<string>
 
-#include"SimpleModelBuilder.h"
+#include"MessageModelBuilder.h"
 #include"RandomWalkMessageModel.h"
 
-class RandomWalkMessageModelBuilder:public SimpleModelBuilder
+class RandomWalkMessageModelBuilder:public MessageModelBuilder
  {
    public:	
-    inline RandomWalkMessageModelBuilder(std::string name):SimpleModelBuilder(name)
+    inline RandomWalkMessageModelBuilder(std::string name):MessageModelBuilder(name)
      {}
  
     inline virtual ~RandomWalkMessageModelBuilder(){}

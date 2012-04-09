@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "MessageData.h"
 #include "MessageNode.h"
@@ -9,7 +10,8 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   this->time = time;
   this->nodeId = nodeId;
   this->nextMessageId = 0;
-  this->MAX_MESSAGES = 100;  // TODO: make this larger, small is good for debugging
+  this->MAX_MESSAGES = 1000;  // TODO: make this larger, small is good for debugging
+  this->trust_distances = NULL;  // must be initialized by calling function
 
   messages = new vector<MessageData*>();
 
@@ -87,4 +89,43 @@ bool MessageNode::hasReceivedMessage(long uuid)
 	return true;
     } 
   return false;
+}
+
+void MessageNode::initFriendships(int numNodes)
+{
+  this->numNodes = numNodes;
+  this->trust_distances = (int *) calloc(numNodes, sizeof(int));
+  for (int i = 0; i < numNodes; i++)
+      trust_distances[i] = -1;
+  trust_distances[nodeId] = 0;  // at a trust distance of 0 from yourself
+}
+
+void MessageNode::setFriendship(int friend_num, bool status)
+{
+  trust_distances[friend_num] = 1;
+}
+
+/*
+double MessageNode::getP()
+{
+  return p;
+}
+*/
+
+int MessageNode::numFriends()
+{
+  // returns the number of people at trust distance 1
+
+  int numfriends = 0;
+  for (int i = 0; i < numNodes; i++)
+    {
+      if (trust_distances[i] == 1)
+	numfriends++;
+    }
+  return numfriends;
+}
+
+int MessageNode::trustDistance(MessageNode *that)
+{
+  return trust_distances[that->getNodeId()];
 }

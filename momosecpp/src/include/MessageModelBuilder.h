@@ -1,24 +1,24 @@
-#ifndef SIMPLEMODELBUILDER_H_
-#define SIMPLEMODELBUILDER_H_
+#ifndef MESSAGEMODELBUILDER_H_
+#define MESSAGEMODELBUILDER_H_
 
 #include<iostream>
 #include<string>
 
 #include"ModelBuilder.h"
-#include"SimpleModelParser.h"
+#include"MessageModelParser.h"
 #include"BaseParser.h"
 
 
-class SimpleModelBuilder:public ModelBuilder
+class MessageModelBuilder:public ModelBuilder
  {
     protected:
-       SimpleModelParser *configParser;
+       MessageModelParser *configParser;
    	 
    public:	
-    inline SimpleModelBuilder(std::string name):ModelBuilder(name) 
-     {configParser=new SimpleModelParser();}
+    inline MessageModelBuilder(std::string name):ModelBuilder(name) 
+     {configParser=new MessageModelParser();}
     
-   inline virtual ~SimpleModelBuilder() {}
+   inline virtual ~MessageModelBuilder() {}
 	    
    inline BaseParser* getConfigParser() 
     {return configParser;}
@@ -26,4 +26,4 @@ class SimpleModelBuilder:public ModelBuilder
    
 };
 
-#endif /*SIMPLEMODELBUILDER_H_*/
+#endif /*MESSAGEMODELBUILDER_H_*/

@@ -11,7 +11,8 @@ RandomWalkMessageModel::RandomWalkMessageModel()
 RandomWalkMessageModel::~RandomWalkMessageModel(){} 
 
 void RandomWalkMessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius, 
-				      float pauseTime, float vMin, float vMax, bool isPhysical)
+				      float pauseTime, float vMin, float vMax, bool isPhysical,
+				      float probability, int max_trust_distance)
 {
   ((MessageModel *) this)->setModel(antennaRadius);
 
@@ -21,6 +22,8 @@ void RandomWalkMessageModel::setModel(int numNodes, float nodeRadius, float ante
   this->pauseTime = pauseTime;
   this->vMax = vMax;
   this->vMin = vMin;
+  this->probability = probability;
+  this->max_trust_distance = max_trust_distance;
 
   isPhysical = true;
   setThinkerProp(true);

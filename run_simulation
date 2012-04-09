@@ -4,15 +4,18 @@
 #---------------------------------------------------------
 
 #---------------------------------------------------------
-# This script compiles and runs the momose simulation.
+# This script compiles and runs the momose simulation
+# and does necessary post-processing for c++ simulator.
+#
+# commands for java simulator
+# javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
+# java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
 #
 #---------------------------------------------------------
 
-cd momose
-javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
-java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
-cd ..
-
-cd plotting
-python plot.py
+cd momosecpp/src
+make
+./momose -f ../configs/RWM_config
+cd ../../plotting
+python process.py > ./data.csv
 cd ..

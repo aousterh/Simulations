@@ -17,7 +17,8 @@ class RandomWalkMessageModel:public MessageModel
   
  public:
 	void setModel(int numNodes, float nodeRadius, float antennaRadius, 
-		      float pauseTime, float vMin, float vMax, bool isPhysical);
+		      float pauseTime, float vMin, float vMax, bool isPhysical,
+		      float probability, int max_trust_distance);
 	MessageNode *CreateMessageNode(Scenario *scenario, SimTime *time);
  
   // Virtual methods
