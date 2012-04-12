@@ -33,9 +33,16 @@ for i in range(num_lines):
   f = 2 * (num_lines - i) - 1
   x_data = np.genfromtxt("./data.csv", delimiter=",", skip_header= h, skip_footer = f)
   y_data = np.genfromtxt("./data.csv", delimiter=",", skip_header= h+1, skip_footer = f-1)
-  sub2.plot(x_data.tolist(), y_data.tolist(), '-')
-  if max(x_data) > x_max:
-    x_max = max(x_data)
+  x_data.tolist()
+  y_data.tolist()
+
+  sub2.plot(x_data, y_data, '-')
+  try:
+    if max(x_data) > x_max:
+      x_max = max(x_data)
+  except:
+    x_max = x_max
+
 sub2.set_xlim(0, x_max)
 sub2.set_ylim(0, 1)
 

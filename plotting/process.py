@@ -15,17 +15,20 @@ y coordinates n
 """
 
 import numpy as np
+import csv
 
+#r = np.genfromtxt("../momosecpp/output/messageRecorderOutput.csv", delimiter=",", skip_header=4)
+#r = r.tolist()
 
-r = np.genfromtxt("../momosecpp/output/messageRecorderOutput.csv", delimiter=",", skip_header=4)
-r = r.tolist()
+reader = csv.reader(open("../momosecpp/output/messageRecorderOutput.csv", "rb"), delimiter=",")
 
 data = []
 latency = []
 uuid = set()
-for i in range(len(r)):
-  t = r[i]
-  data.append((t[0], t[1]))
+
+for row in reader:
+  t = (int(row[0]), int(row[1]))
+  data.append(t)
   uuid.add(t[0])
   latency.append(t[1])
 
