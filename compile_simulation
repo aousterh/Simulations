@@ -1,0 +1,46 @@
+#!/bin/bash
+#---------------------------------------------------------
+# run_simulation
+# Author: Amy Ousterhout
+#---------------------------------------------------------
+
+#---------------------------------------------------------
+# This script compiles and runs the momose simulation
+# and does necessary post-processing for c++ simulator.
+#
+# The default is to not compile anything - by specifying expat and momose as args, you
+# con instruct it to compile the expat libs and momose.
+#
+# commands for java simulator
+# javac -classpath ./src:./lib/gluegen-rt.jar:./lib/jogl.jar -d ./bin ./src/gui/Momose.java
+# java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
+#
+#---------------------------------------------------------
+
+# string indicating to recompile the expat libs
+#EXPAT="expat"
+#MOMOSE="momose"
+
+# Compile expat libs if necessary
+if [ "$1" = $EXPAT ]; then
+    echo "Compiling expat libs"
+    cd ./expat-2.1.0
+    ./configure
+    make clean
+    make
+    cd ..
+    cp ./expat-2.1.0/.libs/libexpat.a ./momosecpp/extlibs/expat/lib/
+    cp ./expat-2.1.0/.libs/libexpat.so ./momosecpp/extlibs/expat/lib/
+    cp ./expat-2.1.0/.libs/libexpat.so.1 ./momosecpp/extlibs/expat/lib/
+    cp ./expat-2.1.0/.libs/libexpat.so.1.6.0 ./momosecpp/extlibs/expat/lib/
+fi
+
+cd momosecpp/src
+
+# Compile momose
+#if [ "$2" = $MOMOSE ]; then
+    echo "Compiling momose"
+    rm momose
+    make clean
+    make
+#fi
