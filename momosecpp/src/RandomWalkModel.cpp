@@ -8,7 +8,7 @@ RandomWalkModel::RandomWalkModel()
 
 RandomWalkModel::~RandomWalkModel(){}
 
-void RandomWalkModel::setup(Scenario *scenario,SimTime *time) 
+void RandomWalkModel::setup(Scenario *scenario,SimTime *simTime) 
  {
    /*for(int  i=0;i<numNodes;i++)
     {

@@ -2,6 +2,7 @@
 CC=g++
 CFLAG=
 
+
 #Definizione variabili personalizzate
 BASEDIR=/u/aousterh/IndependentWork/Simulations/momosecpp
 SRCDIR=$(BASEDIR)/src
@@ -27,8 +28,8 @@ MODELSOBJS=RandomWalkModelBuilder.o RandomWalkModel.o RandomWalkNode.o \
            EraModelParser.o EraModelBuilder.o EraModel.o EraNode.o \
            SimpleModel.o SimpleNode.o SimpleModelParser.o \
 	   MessageModel.o MessageNode.o MessageModelParser.o MessageData.o \
-	   RandomWalkMessageModelBuilder.o RandomWalkMessageModel.o RandomWalkMessageNode.o
-	   
+	   RandomWalkMessageModelBuilder.o RandomWalkMessageModel.o RandomWalkMessageNode.o \
+	   RandomWaypointMessageModelBuilder.o RandomWaypointMessageModel.o RandomWaypointMessageNode.o	   
 
 DATARECORDERSOBJS= ViewerRecorder.o ViewerRecorderParser.o ViewerRecorderBuilder.o \
 	   MessageRecorder.o MessageRecorderBuilder.o

@@ -21,11 +21,14 @@ import csv
 #r = r.tolist()
 
 reader = csv.reader(open("../momosecpp/output/messageRecorderOutput.csv", "rb"), delimiter=",")
+# skip 3 lines of info
+reader.next()
+reader.next()
+reader.next()
 
 data = []
 latency = []
 uuid = set()
-
 for row in reader:
   t = (int(row[0]), int(row[1]))
   data.append(t)

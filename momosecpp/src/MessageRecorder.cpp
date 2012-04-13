@@ -119,7 +119,7 @@ void MessageRecorder::close()
 void MessageRecorder::writeMessageInfo()
 {
   outputFile<<"uuid, latency"<<endl;
-  
+
   vector<Node*>::iterator it;
   for (it = nodes->begin(); it != nodes->end(); it++)
     {
@@ -127,7 +127,8 @@ void MessageRecorder::writeMessageInfo()
       for (int i = 0; i < node->numTotalMessages(); i++)
 	{
 	  MessageData *msg = node->getMessage(i);
-	  outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<endl;
+	  if (!msg->wasOutgoing())  // aka this node did not send this message
+	      outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<endl;
 	}
     }
 

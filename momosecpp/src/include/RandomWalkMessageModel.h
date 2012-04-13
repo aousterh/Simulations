@@ -2,7 +2,7 @@
 #define RANDOMWALKMESSAGEMODEL_H_
 
 #include"MessageModel.h"
-#include"MessageNode.h"
+#include"RandomWalkMessageNode.h"
 
 class RandomWalkMessageModel:public MessageModel
 {
@@ -19,7 +19,7 @@ class RandomWalkMessageModel:public MessageModel
 	void setModel(int numNodes, float nodeRadius, float antennaRadius, 
 		      float pauseTime, float vMin, float vMax, bool isPhysical,
 		      float probability, int max_trust_distance);
-	MessageNode *CreateMessageNode(Scenario *scenario, SimTime *time);
+	RandomWalkMessageNode *CreateMessageNode(Scenario *scenario, SimTime *simTime);
  
   // Virtual methods
 	

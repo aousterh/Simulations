@@ -11,6 +11,7 @@
 
 #include"RandomWalkMessageModelBuilder.h"
 #include"RandomWalkModelBuilder.h"
+#include"RandomWaypointMessageModelBuilder.h"
 #include"RandomWaypointModelBuilder.h"
 #include"PursueModelBuilder.h"
 #include"NomadicModelBuilder.h"
@@ -303,6 +304,7 @@ void SimulationManager::setModelBuilders()
      modelsBuilders->push_back(new RandomWalkMessageModelBuilder("Random Walk Message Model"));
      modelsBuilders->push_back(new RandomWalkModelBuilder("Random walk Model"));
      modelsBuilders->push_back(new RandomWaypointModelBuilder("Random waypoint Model")); 
+     modelsBuilders->push_back(new RandomWaypointMessageModelBuilder("Random Waypoint Message Model")); 
      modelsBuilders->push_back(new EraModelBuilder("ERA Model")); 
      modelsBuilders->push_back(new HotSpotModelBuilder("Hot-Spot Model")); 
      modelsBuilders->push_back(new NomadicModelBuilder("Nomadic Model")); 

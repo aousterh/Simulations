@@ -53,7 +53,7 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
   computeTrustDistances();
 }
 
-void MessageModel::think(SimTime *time)
+void MessageModel::think(SimTime *simTime)
 {
   // see if any nodes can exchange messages
   // with current implementation, message can travel a long way in one time step if
@@ -65,7 +65,8 @@ void MessageModel::think(SimTime *time)
 	{
 	  MessageNode *node2 = (MessageNode*) nodes[j];
 	  if (node1->distanceTo(node2) <= EXCHANGE_DISTANCE &&
-	      node1->trustDistance(node2) < max_trust_distance) {
+	      node1->trustDistance(node2) <= max_trust_distance &&
+	      node1->trustDistance(node2) > 0) {
 	    node1->exchangeWith(node2);
 	    node2->exchangeWith(node1);
 	  }
@@ -96,7 +97,7 @@ void MessageModel::computeTrustDistances()
       if (diameter_per_node > diameter)
 	diameter = diameter_per_node;
     }
-  //  printf("diameter: %d\n", diameter);
+  printf("diameter: %d\n", diameter);
 
   /*
   for (int i = 0; i < numNodes; i++)

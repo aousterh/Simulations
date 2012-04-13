@@ -1,10 +1,11 @@
 #include "MessageData.h"
 
-MessageData::MessageData(long uuid, float latency, float createTime)
+MessageData::MessageData(long uuid, float latency, float createTime, bool outgoing)
 {
   this->uuid = uuid;
   this->latency = latency;
   this->creationTime = createTime;
+  this->outgoing = outgoing;
 }
 
 long MessageData::getUuid()
@@ -24,7 +25,7 @@ float MessageData::getCreationTime()
 
 bool MessageData::wasOutgoing()
 {
-  return (latency == 0); // TODO: THIS MAKES SOME ASSUMPTIONS?
+  return outgoing;
 }
 
 MessageData::~MessageData(){}

@@ -8,12 +8,6 @@
 
 class RandomWalkMessageNode: public MessageNode
 {
- protected:
-  float localTime;
-  float vMax;
-  float vMin;
-  float pauseTime;
-	
  public:
   RandomWalkMessageNode(Point2D pos, const float &radius, int nodeId, SimTime *time);
   virtual ~RandomWalkMessageNode();

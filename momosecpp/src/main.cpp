@@ -126,4 +126,4 @@ void sigHandler(int signal_number)
     simulation->loop=false;	  
     /* ripristino del signal handler */ 
     signal(signal_number,sigHandler);
-  }//Fine singHandler    
+  }//Fine singHandler

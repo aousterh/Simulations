@@ -6,11 +6,12 @@ class MessageData
 {
  private:
   long uuid;
-  float latency;  // 0 for outgoing messages
+  float latency;
   float creationTime;
+  bool outgoing;
 	
  public:
-  MessageData(long uuid, float latency, float createTime);
+  MessageData(long uuid, float latency, float createTime, bool outgoing);
   ~MessageData();
 
   long getUuid();

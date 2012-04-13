@@ -11,5 +11,6 @@ momosecpp/output/*
 momosecpp/configs/*
 momosecpp/src/momose
 scripts/pbs_script.*
+scripts/old_outputs/*
 plotting/*.csv
 *.DS_Store

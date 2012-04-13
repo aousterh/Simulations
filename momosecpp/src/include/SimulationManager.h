@@ -47,7 +47,4 @@ class SimulationManager
    
  };
 
-#endif /*SIMULATIONMANAGER_H_*/	
- 
- 
- 
+#endif /*SIMULATIONMANAGER_H_*/

@@ -5,9 +5,12 @@
 #include "MessageNode.h"
 
 
-MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *time): Node(pos,radius)
+MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *simTime): Node(pos,radius)
 {
-  this->time = time;
+  this->simTime = simTime;
+  this->vMax = 5;
+  this->vMin = 0;
+  this->pauseTime = 1;
   this->nodeId = nodeId;
   this->nextMessageId = 0;
   this->MAX_MESSAGES = 1000;  // TODO: make this larger, small is good for debugging
@@ -18,7 +21,7 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   // generate one message, created now, at the start
   // create msg id by concatenating the node id and the message id
   long uuid = ((long) nodeId) * this->MAX_MESSAGES + nextMessageId++;
-  MessageData *msg = new MessageData(uuid, 0, time->getTime());
+  MessageData *msg = new MessageData(uuid, 0, simTime->getTime(), true);
   messages->push_back(msg);
 }
 
@@ -61,12 +64,14 @@ float MessageNode::distanceTo(MessageNode *that)
 
 void MessageNode::exchangeWith(MessageNode *that)
 {
+
   vector<MessageData*>::iterator it;
   for (it = messages->begin(); it != messages->end(); it++)
     {
       MessageData *msg = (MessageData*) *it;
-      if (!that->hasReceivedMessage(msg->getUuid()))
+      if (!that->hasReceivedMessage(msg->getUuid())) {
 	that->ReceiveMessage(msg);
+      }
     }
 }
 
@@ -74,8 +79,8 @@ void MessageNode::ReceiveMessage(MessageData *msg)
 {
   if (messages->size() >= this->MAX_MESSAGES)
     printf("ERROR: cannot receive messages\n");
-  MessageData *newMsg = new MessageData(msg->getUuid(), time->getTime() - msg->getCreationTime(),
-					msg->getCreationTime());
+  MessageData *newMsg = new MessageData(msg->getUuid(), simTime->getTime() - msg->getCreationTime(),
+					msg->getCreationTime(), false);
   messages->push_back(newMsg);
 }
 
