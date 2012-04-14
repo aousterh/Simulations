@@ -64,6 +64,7 @@ float MessageNode::distanceTo(MessageNode *that)
 
 void MessageNode::exchangeWith(MessageNode *that)
 {
+  // this Node sends messages to that Node
 
   vector<MessageData*>::iterator it;
   for (it = messages->begin(); it != messages->end(); it++)

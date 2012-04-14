@@ -11,16 +11,24 @@ class MessageModel:public Model
 	virtual ~MessageModel();
 	
  protected:
-        int numNodes;
+	int numNodes;
         float nodeRadius;
         float antennaRadius;
+	float vMin;
+	float vMax;
+	float pauseTime;
 	int lastNodeId;  // last used node id
 	float EXCHANGE_DISTANCE;  // TODO: read this in from parser?
-	int max_trust_distance;
 	float probability;
+	int max_trust_distance;
+	int node_exchange_num;
+	int msg_exchange_num;
   
  public:
-	void setModel(float exchangeDistance);
+	void setModel(int numNodes, float nodeRadius, float antennaRadius,
+		      float pauseTime, float vMin, float vMax, bool isPhysical,
+		      float probability, int max_trust_distance, 
+		      int node_exchange_num, int msg_exchange_num);
 	void setup(Scenario *scenario, SimTime *simTime);
 	void think(SimTime *simTime);
 

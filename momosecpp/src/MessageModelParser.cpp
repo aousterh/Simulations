@@ -56,8 +56,25 @@ int MessageModelParser::getMaxTrustDistance()
 	 return 0;
      else
        return max_trust_distance;		
-   } // end getMaxTrustDistance 
+} // end getMaxTrustDistance 
    
+int MessageModelParser::getNodeExchangeNum()
+{
+     if(node_exchange_num < 1)  
+	 return 1;
+     else
+       return node_exchange_num;		
+} // end getNodeExchangeNum 
+
+
+int MessageModelParser::getMsgExchangeNum()
+{
+     if(msg_exchange_num < 1)  
+	 return 1;
+     else
+       return msg_exchange_num;		
+} // end getMsgExchangeNum 
+
 	
 	
 void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** attrs)
@@ -84,7 +101,13 @@ void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** at
    
       if(str=="maxtd")
 	 { actTag=MessageModelParser::MAXTRUSTD; } 		  
- 
+
+      if(str=="nodeexnum")
+	 { actTag=MessageModelParser::NODEEXCHANGENUM; } 		    
+
+      if(str=="msgexnum")
+	 { actTag=MessageModelParser::MSGEXCHANGENUM; } 		    
+
   }//Fine OnStartElement	
   
   
@@ -128,6 +151,18 @@ void MessageModelParser::OnCharacterData(const XML_Char* data, int len)
 	actTag=-1;
       }
  
+    if(actTag==MessageModelParser::NODEEXCHANGENUM) 
+      { 
+	node_exchange_num=stringToInt(str);
+	actTag=-1;
+      }
+
+    if(actTag==MessageModelParser::MSGEXCHANGENUM) 
+      { 
+	msg_exchange_num=stringToInt(str);
+	actTag=-1;
+      }
+
 
 }//Fine  OnCharacterData
   

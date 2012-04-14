@@ -12,10 +12,27 @@ MessageModel::MessageModel()
 
 MessageModel::~MessageModel(){} 
 
-void MessageModel::setModel(float exchangeDistance)
+void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
+			    float pauseTime, float vMin, float vMax, bool isPhysical,
+			    float probability, int max_trust_distance, 
+			    int node_exchange_num, int msg_exchange_num)
 {
-  EXCHANGE_DISTANCE = exchangeDistance;
+  this->numNodes = numNodes;
+  this->nodeRadius = nodeRadius;
+  this->antennaRadius = antennaRadius;
+  this->pauseTime = pauseTime;
+  this->vMax = vMax;
+  this->vMin = vMin;
+  this->EXCHANGE_DISTANCE = antennaRadius; // use antenna radius as exchange distance for now
+  this->probability = probability;
+  this->max_trust_distance = max_trust_distance;
+  this->node_exchange_num = node_exchange_num;
+  this->msg_exchange_num = msg_exchange_num;
+
+  isPhysical = true;
+  setThinkerProp(true);
 }
+
 
 void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 {
@@ -55,21 +72,40 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 
 void MessageModel::think(SimTime *simTime)
 {
-  // see if any nodes can exchange messages
-  // with current implementation, message can travel a long way in one time step if
-  // several nodes are connected :-/
-  for (int i = 0; i < numNodes - 1; i++)
+  // TODO: any node could be receiving from many others at once, although
+  // each only sends to one other node at once
+
+
+  for (int i = 0; i < numNodes; i++)
     {
       MessageNode *node1 = (MessageNode*) nodes[i];
+      
+      // obtain nodes within physical and trust distances
+      vector<Node*> potentials;
       for (int j = 0; j < numNodes; j++)
 	{
-	  MessageNode *node2 = (MessageNode*) nodes[j];
-	  if (node1->distanceTo(node2) <= EXCHANGE_DISTANCE &&
-	      node1->trustDistance(node2) <= max_trust_distance &&
-	      node1->trustDistance(node2) > 0) {
-	    node1->exchangeWith(node2);
-	    node2->exchangeWith(node1);
-	  }
+	  if (j != i)
+	    {
+	      MessageNode *node2 = (MessageNode*) nodes[j];
+	      if (node1->distanceTo(node2) <= EXCHANGE_DISTANCE &&
+		  node1->trustDistance(node2) <= max_trust_distance &&
+		  node1->trustDistance(node2) > 0) {
+		potentials.push_back(node2);
+	      }
+	    }
+	}
+
+      // TODO: messages could travel many hops in one timestep if
+      // there are big groups of connected components . . . does this happen?
+      // choose a random node to send messages to - push model
+      int exchanges_per_t = 4;
+      int exchanges_left = exchanges_per_t;
+      while (exchanges_left > 0 && potentials.size() > 0)
+	{
+	  int index = ((float) rand()) / RAND_MAX * potentials.size();
+	  MessageNode *node2 = (MessageNode *) potentials[index];
+	  node1->exchangeWith(node2);  // send messages to node2
+	  potentials.erase(potentials.begin() + index);
 	}
     }
 }
