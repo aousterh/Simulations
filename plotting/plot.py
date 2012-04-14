@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
@@ -10,14 +11,15 @@ The rest of the rows are pairs of x and y coordinates for different lines, so th
 numbered rows are x-coordinates, and the odd numbered rows are y-coordinates.
 """
 
+file = sys.argv[1]
 
 fig1 = plt.figure()
 sub1 = fig1.add_subplot(211)
 
-row0 = np.genfromtxt("./data.csv", delimiter=",", usecols=(0))
+row0 = np.genfromtxt(file, delimiter=",", usecols=(0))
 num_lines = int(row0.tolist()[0])
 
-l = np.genfromtxt("./data.csv", delimiter=",", skip_header=1, skip_footer=(2*num_lines))
+l = np.genfromtxt(file, delimiter=",", skip_header=1, skip_footer=(2*num_lines))
 latency = l.tolist()
 
 
@@ -31,8 +33,8 @@ x_max = 0
 for i in range(num_lines):
   h = 2 + 2*i
   f = 2 * (num_lines - i) - 1
-  x_data = np.genfromtxt("./data.csv", delimiter=",", skip_header= h, skip_footer = f)
-  y_data = np.genfromtxt("./data.csv", delimiter=",", skip_header= h+1, skip_footer = f-1)
+  x_data = np.genfromtxt(file, delimiter=",", skip_header= h, skip_footer = f)
+  y_data = np.genfromtxt(file, delimiter=",", skip_header= h+1, skip_footer = f-1)
   x_data.tolist()
   y_data.tolist()
 
