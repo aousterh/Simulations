@@ -14,7 +14,7 @@ numbered rows are x-coordinates, and the odd numbered rows are y-coordinates.
 file = sys.argv[1]
 
 fig1 = plt.figure()
-sub1 = fig1.add_subplot(211)
+#sub1 = fig1.add_subplot(211)
 
 row0 = np.genfromtxt(file, delimiter=",", usecols=(0))
 num_lines = int(row0.tolist()[0])
@@ -22,12 +22,15 @@ num_lines = int(row0.tolist()[0])
 l = np.genfromtxt(file, delimiter=",", skip_header=1, skip_footer=(2*num_lines))
 latency = l.tolist()
 
-
+"""
 n, bins, patches = sub1.hist(latency, 10, normed=1, cumulative=False, histtype='bar', alpha=0.75)
 sub1.set_xlim(min(latency), max(latency))
 sub1.set_ylim(0, max(n) * 1.1)
+"""
 
-sub2 = fig1.add_subplot(212)
+
+# sub2 = fig1.add_subplot(212)
+sub2 = fig1.add_subplot(111)
 
 x_max = 0
 for i in range(num_lines):
@@ -45,6 +48,7 @@ for i in range(num_lines):
   except:
     x_max = x_max
 
+x_max = 140
 sub2.set_xlim(0, x_max)
 sub2.set_ylim(0, 1)
 
