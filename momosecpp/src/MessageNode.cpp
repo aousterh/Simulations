@@ -21,7 +21,7 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   // generate one message, created now, at the start
   // create msg id by concatenating the node id and the message id
   long uuid = ((long) nodeId) * this->MAX_MESSAGES + nextMessageId++;
-  MessageData *msg = new MessageData(uuid, 0, simTime->getTime(), true);
+  MessageData *msg = new MessageData(uuid, this, 0, simTime->getTime(), true);
   messages->push_back(msg);
 }
 
@@ -62,16 +62,26 @@ float MessageNode::distanceTo(MessageNode *that)
   return this->pos.distance(that->getPosition());
 }
 
-void MessageNode::exchangeWith(MessageNode *that)
+void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num, 
+				 int msg_trust_distance)
 {
   // this Node sends messages to that Node
-
+  // send the most recent msg_exchange_num messages from senders
+  // within trust distance msg_trust_distance of that
+  int sent = 0;
   vector<MessageData*>::iterator it;
   for (it = messages->begin(); it != messages->end(); it++)
     {
+      if (sent == msg_exchange_num)
+	break;
+
       MessageData *msg = (MessageData*) *it;
-      if (!that->hasReceivedMessage(msg->getUuid())) {
+
+      MessageNode *sender = msg->getSender();
+      if (that->trustDistance(sender) <= msg_trust_distance &&
+	  !that->hasReceivedMessage(msg->getUuid())) {
 	that->ReceiveMessage(msg);
+	sent++;
       }
     }
 }
@@ -80,7 +90,8 @@ void MessageNode::ReceiveMessage(MessageData *msg)
 {
   if (messages->size() >= this->MAX_MESSAGES)
     printf("ERROR: cannot receive messages\n");
-  MessageData *newMsg = new MessageData(msg->getUuid(), simTime->getTime() - msg->getCreationTime(),
+  MessageData *newMsg = new MessageData(msg->getUuid(), msg->getSender(), 
+					simTime->getTime() - msg->getCreationTime(),
 					msg->getCreationTime(), false);
   messages->push_back(newMsg);
 }

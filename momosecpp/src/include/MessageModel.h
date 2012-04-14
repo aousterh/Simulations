@@ -20,15 +20,17 @@ class MessageModel:public Model
 	int lastNodeId;  // last used node id
 	float EXCHANGE_DISTANCE;  // TODO: read this in from parser?
 	float probability;
-	int max_trust_distance;
-	int node_exchange_num;
-	int msg_exchange_num;
+	int node_trust_distance;  // max trust distance of any node we exchange with
+	int msg_trust_distance;  // max trust distance of any sender of any msg we recieve
+	int node_exchange_num;  // number of nodes to exchange with at once
+	int msg_exchange_num;  // number of messages to send at once to another node
   
  public:
 	void setModel(int numNodes, float nodeRadius, float antennaRadius,
 		      float pauseTime, float vMin, float vMax, bool isPhysical,
-		      float probability, int max_trust_distance, 
-		      int node_exchange_num, int msg_exchange_num);
+		      float probability, int node_trust_distance,
+		      int msg_trust_distance, int node_exchange_num,
+		      int msg_exchange_num);
 	void setup(Scenario *scenario, SimTime *simTime);
 	void think(SimTime *simTime);
 

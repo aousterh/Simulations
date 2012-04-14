@@ -16,47 +16,39 @@
 # java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
 #
 #---------------------------------------------------------
+C2="c2"
+COUNT=0
 
-# string indicating to recompile the expat libs
-EXPAT="expat"
-MOMOSE="momose"
-
-# Compile expat libs if necessary
-if [ "$1" = $EXPAT ]; then
-    echo "Compiling expat libs"
-    cd ./expat-2.1.0
-    ./configure
-    make clean
-    make
-    cd ..
-    cp ./expat-2.1.0/.libs/libexpat.a ./momosecpp/extlibs/expat/lib/
-    cp ./expat-2.1.0/.libs/libexpat.so ./momosecpp/extlibs/expat/lib/
-    cp ./expat-2.1.0/.libs/libexpat.so.1 ./momosecpp/extlibs/expat/lib/
-    cp ./expat-2.1.0/.libs/libexpat.so.1.6.0 ./momosecpp/extlibs/expat/lib/
+# add libraries to be preloaded if running on c2
+if [ "$1" = $C2 ]; then
+    export LD_PRELOAD="./../extlibs/expat/lib/libexpat.so.1"
+    echo $LD_PRELOAD
 fi
 
-cd momosecpp/src
+# remove existing data files
+for f in $( ls ./plotting/data_* ); do
+    echo "Removing data file: " $f
+    rm -f $f
+done
 
+# removing temp files in configs directory
+for f in $( ls ./momosecpp/configs/*~ ); do
+    echo "Removing temp file: " $f
+    rm -f $f
+done
 
-# Compile momose
-#if [ "$2" = $MOMOSE ]; then
-#    echo "Compiling momose"
-#    rm momose
-#    make clean
-#    make
-#fi
-
-
-# add libraries to be preloaded
-export LD_PRELOAD="./../extlibs/expat/lib/libexpat.so.1"
-echo $LD_PRELOAD
-
-
-# run momose and process the output into ./plotting/data.csv
+# run momose and process the output into ./plotting/data_??.csv
+# where ?? is a number
 echo "Running the simulation"
-./momose -f ../configs/RWM_config
-echo "Processing the data"
-cd ../../plotting
-rm ./data.csv
-python process.py > ./data.csv
-cd ..
+cd ./momosecpp/src
+for f in $( ls ../configs/RWM_config_* ); do
+    echo "Running sim for file: " $f
+    ./momose -f $f
+    echo "Processing data for file: " $f
+    cd ../../plotting
+    python process.py > ./data_$COUNT.csv
+    cd ../momosecpp/src
+    let COUNT=COUNT+1
+done
+
+cd ../..

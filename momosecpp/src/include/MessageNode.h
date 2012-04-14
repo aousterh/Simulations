@@ -38,7 +38,7 @@ class MessageNode: public Node
   int numReceivedMessages();
   MessageData *getMessage(int index);
   float distanceTo(MessageNode *that);
-  void exchangeWith(MessageNode *that);
+  void pushMessagesTo(MessageNode *that, int msg_exchange_num, int msg_trust_distance);
   void ReceiveMessage(MessageData *msg);
   bool hasReceivedMessage(long uuid);
   void initFriendships(int numNodes);

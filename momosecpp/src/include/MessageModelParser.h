@@ -13,16 +13,18 @@ class MessageModelParser: public ModelParser
       static const int VMIN=6;
       static const int VMAX=7;	   
       static const int PROBABILITY=8;
-      static const int MAXTRUSTD=9;
-      static const int NODEEXCHANGENUM=10;
-      static const int MSGEXCHANGENUM=11;
+      static const int NODETRUSTD=9;  // trust distance used for determining nodes to exchange with
+      static const int MSGTRUSTD=10;  // trust distance used for determining msgs to exchange
+      static const int NODEEXCHANGENUM=11;
+      static const int MSGEXCHANGENUM=12;
 
    protected:
 	float pauseTime;	
         float vMin;
         float vMax;    
 	float probability;
-	int max_trust_distance;
+	int node_trust_distance;
+	int msg_trust_distance;
 	int node_exchange_num;  // max number of nodes to exchange with per time step
 	int msg_exchange_num;  // max number of messages to exchange in one time step
 
@@ -35,7 +37,8 @@ class MessageModelParser: public ModelParser
       float getVMin();
       float getPauseTime();
       float getProbability();
-      int getMaxTrustDistance();
+      int getNodeTrustDistance();
+      int getMsgTrustDistance();
       int getNodeExchangeNum();
       int getMsgExchangeNum();
    

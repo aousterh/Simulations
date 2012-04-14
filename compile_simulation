@@ -18,8 +18,8 @@
 #---------------------------------------------------------
 
 # string indicating to recompile the expat libs
-#EXPAT="expat"
-#MOMOSE="momose"
+EXPAT="expat"
+MOMOSE="momose"
 
 # Compile expat libs if necessary
 if [ "$1" = $EXPAT ]; then

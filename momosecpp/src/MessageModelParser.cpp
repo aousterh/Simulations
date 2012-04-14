@@ -5,11 +5,11 @@
 
 MessageModelParser::MessageModelParser():ModelParser()
   { 
-    pauseTime=0;
+    /*    pauseTime=0;
     vMin=0;
     vMax=5;
     probability=0.5;  // arbitrary defaults
-    max_trust_distance=100;
+    node_trust_distance=100;*/
   }//Fine costruttore
 
 MessageModelParser::~MessageModelParser(){}
@@ -50,14 +50,23 @@ float MessageModelParser::getProbability()
        return probability;		
    } // end getProbabilty 
    
-int MessageModelParser::getMaxTrustDistance()
+int MessageModelParser::getNodeTrustDistance()
 {
-     if(max_trust_distance < 0)  
+     if(node_trust_distance < 0)  
 	 return 0;
      else
-       return max_trust_distance;		
-} // end getMaxTrustDistance 
+       return node_trust_distance;		
+} // end getNodeTrustDistance 
    
+
+int MessageModelParser::getMsgTrustDistance()
+{
+     if(msg_trust_distance < 0)  
+	 return 0;
+     else
+       return msg_trust_distance;		
+} // end getMsgTrustDistance 
+
 int MessageModelParser::getNodeExchangeNum()
 {
      if(node_exchange_num < 1)  
@@ -99,8 +108,11 @@ void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** at
      if(str=="prob")
 	 { actTag=MessageModelParser::PROBABILITY; } 		  
    
-      if(str=="maxtd")
-	 { actTag=MessageModelParser::MAXTRUSTD; } 		  
+      if(str=="nodetd")
+	 { actTag=MessageModelParser::NODETRUSTD; } 		  
+
+      if(str=="msgtd")
+	 { actTag=MessageModelParser::MSGTRUSTD; } 		  
 
       if(str=="nodeexnum")
 	 { actTag=MessageModelParser::NODEEXCHANGENUM; } 		    
@@ -145,9 +157,15 @@ void MessageModelParser::OnCharacterData(const XML_Char* data, int len)
 	actTag=-1;
       }
 
-    if(actTag==MessageModelParser::MAXTRUSTD) 
+    if(actTag==MessageModelParser::NODETRUSTD) 
       { 
-	max_trust_distance=stringToInt(str);
+	node_trust_distance=stringToInt(str);
+	actTag=-1;
+      }
+
+    if(actTag==MessageModelParser::MSGTRUSTD) 
+      { 
+	msg_trust_distance=stringToInt(str);
 	actTag=-1;
       }
  

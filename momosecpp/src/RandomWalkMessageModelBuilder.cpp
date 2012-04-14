@@ -8,7 +8,7 @@ Model* RandomWalkMessageModelBuilder::create()
 				   configParser->getAntennaRadius(), configParser->getPauseTime(),
 				   configParser->getVMin(), configParser->getVMax(),
 				   configParser->getPhysicalProp(), configParser->getProbability(),
-				   configParser->getMaxTrustDistance(), configParser->getNodeExchangeNum(),
-				   configParser->getMsgExchangeNum());
+				   configParser->getNodeTrustDistance(), configParser->getMsgTrustDistance(),
+				   configParser->getNodeExchangeNum(), configParser->getMsgExchangeNum());
   return randomWalkMessageModel; 
 }
