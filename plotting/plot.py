@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
+import csv
 
 """
 This script reads in data from a csv file (current in the momosecpp/plotting/text.csv file).
@@ -16,40 +17,52 @@ file = sys.argv[1]
 fig1 = plt.figure()
 #sub1 = fig1.add_subplot(211)
 
-row0 = np.genfromtxt(file, delimiter=",", usecols=(0))
-num_lines = int(row0.tolist()[0])
+reader = csv.reader(open(file, "rb"), delimiter=",")
+#column = np.genfromtxt(file, delimiter=",", usecols=(0))
+row0 = reader.next()
+print row0
+#column = column.tolist()
+num_groups = int(row0[0])
+lines_per_group = 5   # TODO: don't hard code this
+num_lines = num_groups * lines_per_group
 
+"""
 l = np.genfromtxt(file, delimiter=",", skip_header=1, skip_footer=(2*num_lines))
 latency = l.tolist()
 
-"""
 n, bins, patches = sub1.hist(latency, 10, normed=1, cumulative=False, histtype='bar', alpha=0.75)
 sub1.set_xlim(min(latency), max(latency))
 sub1.set_ylim(0, max(n) * 1.1)
 """
 
+for group in range(num_groups):
+  sub = fig1.add_subplot(num_groups, 1, group + 1)
+  
+  x_max = 0
+  
+  # read in first line to figure out how many real lines there are
+  row = reader.next()
+  print row
+  actual_lines = int(row[0])
+  print actual_lines
 
-# sub2 = fig1.add_subplot(212)
-sub2 = fig1.add_subplot(111)
+  for i in range(lines_per_group):
+    x_data = reader.next()
+    y_data = reader.next()
+    x_data = [int(x) for x in x_data]
+    y_data = [float(y) for y in y_data]
 
-x_max = 0
-for i in range(num_lines):
-  h = 2 + 2*i
-  f = 2 * (num_lines - i) - 1
-  x_data = np.genfromtxt(file, delimiter=",", skip_header= h, skip_footer = f)
-  y_data = np.genfromtxt(file, delimiter=",", skip_header= h+1, skip_footer = f-1)
-  x_data.tolist()
-  y_data.tolist()
+    if i < actual_lines:
+      sub.plot(x_data, y_data, '-')
+      try:
+        if max(x_data) > x_max:
+          x_max = max(x_data)
+      except:
+        x_max = x_max
 
-  sub2.plot(x_data, y_data, '-')
-  try:
-    if max(x_data) > x_max:
-      x_max = max(x_data)
-  except:
-    x_max = x_max
-
-x_max = 140
-sub2.set_xlim(0, x_max)
-sub2.set_ylim(0, 1)
+  if len(sys.argv) > 2:
+    x_max = int(sys.argv[2])
+  sub.set_xlim(0, x_max)
+  sub.set_ylim(0, 1)
 
 plt.show()
