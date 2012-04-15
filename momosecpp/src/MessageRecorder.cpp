@@ -127,8 +127,13 @@ void MessageRecorder::writeMessageInfo()
       for (int i = 0; i < node->numTotalMessages(); i++)
 	{
 	  MessageData *msg = node->getMessage(i);
-	  if (!msg->wasOutgoing())  // aka this node did not send this message
-	      outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<endl;
+	  // record this msg if it was not sent by this node
+	  if (!msg->wasOutgoing()) {
+	    MessageNode *sender = msg->getSender();
+	    int trust_dist = node->trustDistance(sender);
+	    // output the Uuid, latency, and trust distance (comma separated)
+	    outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< trust_dist <<endl;
+	  }
 	}
     }
 

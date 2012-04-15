@@ -1,7 +1,8 @@
 #ifndef MESSAGENODE_H_
 #define MESSAGENODE_H_
 
-#include<vector>
+#include <set>
+#include <vector>
 
 #include"MessageData.h"
 #include"Node.h"
@@ -19,6 +20,7 @@ class MessageNode: public Node
   float vMax;
   float vMin;
   vector<MessageData*> *messages;
+  set<long> *message_set;  // set of all message uuid's that have been received
   SimTime *simTime;
   int MAX_MESSAGES;  // should be max value eventually, and static!
   double p;  // the proportion of nodes in the graph that this node should
@@ -33,6 +35,7 @@ class MessageNode: public Node
   MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *simTime);
   virtual ~MessageNode();
 	
+  void insertMessage(MessageData *msg);
   int getNodeId();
   int numTotalMessages();
   int numReceivedMessages();

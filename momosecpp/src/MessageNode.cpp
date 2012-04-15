@@ -13,19 +13,26 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   this->pauseTime = 1;
   this->nodeId = nodeId;
   this->nextMessageId = 0;
-  this->MAX_MESSAGES = 1000;  // TODO: make this larger, small is good for debugging
+  this->MAX_MESSAGES = 10000;  // TODO: make this larger, small is good for debugging
   this->trust_distances = NULL;  // must be initialized by calling function
 
   messages = new vector<MessageData*>();
+  message_set = new set<long>();
 
   // generate one message, created now, at the start
   // create msg id by concatenating the node id and the message id
   long uuid = ((long) nodeId) * this->MAX_MESSAGES + nextMessageId++;
-  MessageData *msg = new MessageData(uuid, this, 0, simTime->getTime(), true);
-  messages->push_back(msg);
+  insertMessage(new MessageData(uuid, this, 0, simTime->getTime(), true));
 }
 
 MessageNode::~MessageNode(){}
+
+void MessageNode::insertMessage(MessageData *msg)
+{
+  messages->push_back(msg);
+  message_set->insert(msg->getUuid());
+  return;
+}
 
 int MessageNode::getNodeId()
 {
@@ -69,13 +76,14 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num,
   // send the most recent msg_exchange_num messages from senders
   // within trust distance msg_trust_distance of that
   int sent = 0;
-  vector<MessageData*>::iterator it;
-  for (it = messages->begin(); it != messages->end(); it++)
+  vector<MessageData*>::reverse_iterator rit;
+  // iterate in reverse order to examine newest first
+  for (rit = messages->rbegin(); rit <  messages->rend(); ++rit)
     {
       if (sent == msg_exchange_num)
 	break;
 
-      MessageData *msg = (MessageData*) *it;
+      MessageData *msg = (MessageData*) *rit;
 
       MessageNode *sender = msg->getSender();
       if (that->trustDistance(sender) <= msg_trust_distance &&
@@ -93,19 +101,14 @@ void MessageNode::ReceiveMessage(MessageData *msg)
   MessageData *newMsg = new MessageData(msg->getUuid(), msg->getSender(), 
 					simTime->getTime() - msg->getCreationTime(),
 					msg->getCreationTime(), false);
-  messages->push_back(newMsg);
+  insertMessage(newMsg);
 }
 
 bool MessageNode::hasReceivedMessage(long uuid)
 {
-  vector<MessageData*>::iterator msg_it;
-  for (msg_it = messages->begin(); msg_it < messages->end(); msg_it++)
-    {
-      MessageData *msg = (MessageData*) *msg_it;
-      if (msg->getUuid() == uuid)
-	return true;
-    } 
-  return false;
+  set<long>::iterator it;
+  it = message_set->find(uuid);
+  return (it != message_set->end());
 }
 
 void MessageNode::initFriendships(int numNodes)

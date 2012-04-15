@@ -36,7 +36,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 top_builddir = .
 
 
-INSTALL = /usr/bin/install -c
+INSTALL = /opt/rocks/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_DATA = ${INSTALL} -m 644
 mkinstalldirs = $(SHELL) $(top_srcdir)/conftools/mkinstalldirs

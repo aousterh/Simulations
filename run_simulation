@@ -32,10 +32,11 @@ for f in $( ls ./plotting/data_* ); do
 done
 
 # removing temp files in configs directory
-for f in $( ls ./momosecpp/configs/*~ ); do
-    echo "Removing temp file: " $f
-    rm -f $f
-done
+echo "Removing temp files in configs directory"
+cd ./momosecpp/configs
+rm -f *~
+cd ../..
+
 
 # run momose and process the output into ./plotting/data_??.csv
 # where ?? is a number
@@ -48,6 +49,7 @@ for f in $( ls ../configs/RWM_config_* ); do
     cd ../../plotting
     python process.py > ./data_$COUNT.csv
     cd ../momosecpp/src
+    cp ../output/messageRecorderOutput.csv ../output/messageRecorderOutput_$COUNT.csv
     let COUNT=COUNT+1
 done
 
