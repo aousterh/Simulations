@@ -79,32 +79,19 @@ for data_set in plot_data_sets:
   # create list of lists where the ith list is the list of the ith
   # latencies from each message
   x_lists3 = []
-  for i in range(m-1):
-    new_list = []
-    for j in range(len(x_lists2)):
-      m_l = x_lists2[j]  # latencies for message j
-      if i < len(m_l):
-        new_list.append(m_l[i])
-    x_lists3.append(new_list)
+  percents = [0.01, 0.10, 0.50, 0.90, 0.99]
+  for p in percents:
+   x_lists3.append([])
+  for lat_list in x_lists2:
+    for i in range(len(percents)):
+      index = int(percents[i] * len(lat_list))
+      if index >= len(lat_list):
+        index = len(lat_list) - 1
+      x_lists3[i].append(lat_list[index])
+    
+  x_data = [sorted(list(set(x))) for x in x_lists3]
 
-  # determine the average number of nodes that received any given message
-  #av = (1.0 * len(data_list)) / len(uuid)
-
-  l_0_01 = int(m*0.01)
-  l_0_10 = int(m*0.1)
-  l_0_50 = int(m*0.5)
-  l_0_90 = int(m*0.9)
-  l_0_99 = int(m*0.99)
-  if l_0_90 >= len(x_lists3):
-    l_0_90 = len(x_lists3) - 1
-  if l_0_99 >= len(x_lists3):
-    l_0_99 = len(x_lists3) - 1
-
-  x_lists4 = [x_lists3[l_0_01], x_lists3[l_0_10], x_lists3[l_0_50], x_lists3[l_0_90], x_lists3[l_0_99]]
-
-  x_data = [sorted(list(set(x))) for x in x_lists4]
-
-  y_data = [[1.0 * x_lists4[i].count(c) / m for c in x_data[i]] for i in range(len(x_lists4))]
+  y_data = [[1.0 * x_lists3[i].count(c) / m for c in x_data[i]] for i in range(len(x_lists3))]
   y_data = [list(np.cumsum(x)) for x in y_data]
 
 

@@ -17,6 +17,11 @@ class MessageModelParser: public ModelParser
       static const int MSGTRUSTD=10;  // trust distance used for determining msgs to exchange
       static const int NODEEXCHANGENUM=11;
       static const int MSGEXCHANGENUM=12;
+      static const int PERCENTADVERSARIES=13;  // percent of total nodes that are adversaries
+      static const int ADVERSARYPROBABILITY=14;  // probability that adversaries form friendships
+      static const int ADVERSARYMSGCREATIONPROBABILITY=15;
+      static const int COLLABORATORMSGCREATIONPROBABILITY=16;
+
 
    protected:
 	float pauseTime;	
@@ -27,6 +32,10 @@ class MessageModelParser: public ModelParser
 	int msg_trust_distance;
 	int node_exchange_num;  // max number of nodes to exchange with per time step
 	int msg_exchange_num;  // max number of messages to exchange in one time step
+	float percent_adversaries;
+        float adversary_probability;
+        float adversary_msg_creation_probability;
+        float collaborator_msg_creation_probability;
 
    public:
       MessageModelParser();
@@ -41,6 +50,10 @@ class MessageModelParser: public ModelParser
       int getMsgTrustDistance();
       int getNodeExchangeNum();
       int getMsgExchangeNum();
+      float getPercentAdversaries();
+      float getAdversaryProbability();
+      float getAdversaryMsgCreationProbability();
+      float getCollaboratorMsgCreationProbability();
    
       
       void OnStartElement(const XML_Char* name, const XML_Char** attrs);

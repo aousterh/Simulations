@@ -84,7 +84,46 @@ int MessageModelParser::getMsgExchangeNum()
        return msg_exchange_num;		
 } // end getMsgExchangeNum 
 
-	
+float MessageModelParser::getPercentAdversaries()
+   {
+     if(percent_adversaries < 0)  
+       return 0;
+     else if (percent_adversaries > 1)
+       return 1;
+     else
+       return percent_adversaries;		
+   } // end getPercentAdversaries 
+
+float MessageModelParser::getAdversaryProbability()
+   {
+     if(adversary_probability < 0)  
+       return 0;
+     else if (adversary_probability > 1)
+       return 1;
+     else
+       return adversary_probability;		
+   } // end getAdversaryProbability
+
+float MessageModelParser::getAdversaryMsgCreationProbability()
+   {
+     if(adversary_msg_creation_probability < 0)  
+       return 0;
+     else if (adversary_msg_creation_probability > 1)
+       return 1;
+     else
+       return adversary_msg_creation_probability;		
+   } // end getAdversaryMsgCreationProbability
+
+float MessageModelParser::getCollaboratorMsgCreationProbability()
+   {
+     if(collaborator_msg_creation_probability < 0)  
+       return 0;
+     else if (collaborator_msg_creation_probability > 1)
+       return 1;
+     else
+       return collaborator_msg_creation_probability;		
+   } // end getCollaboratorMsgCreationProbability
+
 	
 void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** attrs)
   {
@@ -119,6 +158,19 @@ void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** at
 
       if(str=="msgexnum")
 	 { actTag=MessageModelParser::MSGEXCHANGENUM; } 		    
+            
+      if(str=="%adversaries")
+	 { actTag=MessageModelParser::PERCENTADVERSARIES; } 		    
+
+      if(str=="adversary_prob")
+	 { actTag=MessageModelParser::ADVERSARYPROBABILITY; } 		    
+
+      if(str=="advers_msg_prob")
+	 { actTag=MessageModelParser::ADVERSARYMSGCREATIONPROBABILITY; } 		    
+
+      if(str=="collab_msg_prob")
+	 { actTag=MessageModelParser::COLLABORATORMSGCREATIONPROBABILITY; } 		    
+
 
   }//Fine OnStartElement	
   
@@ -181,8 +233,32 @@ void MessageModelParser::OnCharacterData(const XML_Char* data, int len)
 	actTag=-1;
       }
 
+    if(actTag==MessageModelParser::PERCENTADVERSARIES) 
+      { 
+	percent_adversaries=stringToFloat(str);
+	actTag=-1;
+      }
 
-}//Fine  OnCharacterData
+    if(actTag==MessageModelParser::ADVERSARYPROBABILITY) 
+      { 
+	adversary_probability=stringToFloat(str);
+	actTag=-1;
+      }
+
+    if(actTag==MessageModelParser::ADVERSARYMSGCREATIONPROBABILITY) 
+      { 
+	adversary_msg_creation_probability=stringToFloat(str);
+	actTag=-1;
+      }
+
+    if(actTag==MessageModelParser::COLLABORATORMSGCREATIONPROBABILITY) 
+      { 
+	collaborator_msg_creation_probability=stringToFloat(str);
+	actTag=-1;
+      }
+
+
+}//Fine  OnCharacterDatax
   
   
 void MessageModelParser::OnEndElement(const XML_Char* name){}  

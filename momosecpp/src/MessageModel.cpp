@@ -16,7 +16,9 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
 			    float pauseTime, float vMin, float vMax, bool isPhysical,
 			    float probability, int node_trust_distance,
 			    int msg_trust_distance, int node_exchange_num,
-			    int msg_exchange_num)
+			    int msg_exchange_num, float percent_adversaries,
+			    float adversary_probability, float adversary_msg_creation_probability,
+			    float collaborator_msg_creation_probability)
 {
   this->numNodes = numNodes;
   this->nodeRadius = nodeRadius;
@@ -30,6 +32,11 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
   this->msg_trust_distance = msg_trust_distance;
   this->node_exchange_num = node_exchange_num;
   this->msg_exchange_num = msg_exchange_num;
+  this->percent_adversaries = percent_adversaries;
+  this->adversary_probability = adversary_probability;
+  this->adversary_msg_creation_probability = adversary_msg_creation_probability;
+  this->collaborator_msg_creation_probability = collaborator_msg_creation_probability;
+
 
   isPhysical = true;
   setThinkerProp(true);
@@ -38,8 +45,8 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
 
 void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 {
-  double PERCENT_ADVERSARIES = 0.02;  // percent of total nodes that are adversaries
-  double ADVERSARY_PROBABILITY = probability * 0.25;  // probability that an adversary makes a friendship
+  //  double PERCENT_ADVERSARIES = 0.02;  // percent of total nodes that are adversaries
+  //double ADVERSARY_PROBABILITY = probability * 0.25;  // probability that an adversary makes a friendship
 
   for (int i = 0; i < numNodes; i++)
     {
@@ -49,15 +56,15 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
       nodes.push_back(newNode);
       newNode->initFriendships(numNodes);
       // some are adversaries, rest are collaborators
-      if (i < numNodes * PERCENT_ADVERSARIES)
-	newNode->setType(ADVERSARY, ADVERSARY_PROBABILITY);
+      if (i < numNodes * percent_adversaries)
+	newNode->setType(ADVERSARY, adversary_probability);
       else
 	newNode->setType(COLLABORATOR, probability);
     }
 
   // the average probability that a node makes a friendship
-  double average_p = PERCENT_ADVERSARIES * ADVERSARY_PROBABILITY + 
-    (1 - PERCENT_ADVERSARIES) * probability;
+  double average_p = percent_adversaries * adversary_probability + 
+    (1 - percent_adversaries) * probability;
 
   // seed random number generator
   srand((unsigned) time(NULL));
@@ -89,7 +96,7 @@ void MessageModel::think(SimTime *simTime)
 {
   // TODO: any node could be receiving from many others at once, although
   // each only sends to one other node at once
-  double MSG_CREATION_PROBABILITY = 0.01;
+  // double ADVERSARY_MSG_CREATION_PROBABILITY = 0.1;
 
   // adversaries create new messages
   for (int i = 0; i < numNodes; i++)
@@ -99,7 +106,7 @@ void MessageModel::think(SimTime *simTime)
 	{
 	  // create new message with some probability
 	  double random = ((float) rand()) / RAND_MAX;
-	  if (random < MSG_CREATION_PROBABILITY)
+	  if (random < adversary_msg_creation_probability)
 	    node->createNewMessage();
 	}
     }

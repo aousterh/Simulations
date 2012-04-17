@@ -3,7 +3,6 @@
 
 #include<iostream>
 #include<string>
-
 #include"MessageModelBuilder.h"
 #include"RandomWaypointMessageModel.h"
 

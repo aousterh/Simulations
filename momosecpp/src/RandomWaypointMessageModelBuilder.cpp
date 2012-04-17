@@ -9,6 +9,9 @@ Model* RandomWaypointMessageModelBuilder::create()
 				       configParser->getVMin(), configParser->getVMax(),
 				       configParser->getPhysicalProp(), configParser->getProbability(),
 				       configParser->getNodeTrustDistance(), configParser->getMsgTrustDistance(),
-				       configParser->getNodeExchangeNum(), configParser->getMsgExchangeNum());
+				       configParser->getNodeExchangeNum(), configParser->getMsgExchangeNum(),
+				       configParser->getPercentAdversaries(), configParser->getAdversaryProbability(),
+				       configParser->getAdversaryMsgCreationProbability(),
+				       configParser->getCollaboratorMsgCreationProbability());
   return randomWaypointMessageModel; 
 }
