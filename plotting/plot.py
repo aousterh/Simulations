@@ -26,17 +26,10 @@ num_groups = int(row0[0])
 lines_per_group = 5   # TODO: don't hard code this
 num_lines = num_groups * lines_per_group
 
-"""
-l = np.genfromtxt(file, delimiter=",", skip_header=1, skip_footer=(2*num_lines))
-latency = l.tolist()
-
-n, bins, patches = sub1.hist(latency, 10, normed=1, cumulative=False, histtype='bar', alpha=0.75)
-sub1.set_xlim(min(latency), max(latency))
-sub1.set_ylim(0, max(n) * 1.1)
-"""
 
 for group in range(num_groups):
-  sub = fig1.add_subplot(num_groups, 1, group + 1)
+  # fix at 3 sub-plots
+  sub = fig1.add_subplot(3, 1, group + 1)
   
   x_max = 0
   
