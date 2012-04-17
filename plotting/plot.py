@@ -52,6 +52,9 @@ for group in range(num_groups):
     x_data = [int(x) for x in x_data]
     y_data = [float(y) for y in y_data]
 
+    print len(x_data)
+    print len(y_data)
+
     if i < actual_lines:
       sub.plot(x_data, y_data, '-')
       try:
