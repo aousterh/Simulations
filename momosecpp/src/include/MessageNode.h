@@ -9,6 +9,10 @@
 #include"Point2D.h"
 #include"SimTime.h"
 
+typedef enum {
+  COLLABORATOR,
+  ADVERSARY
+} node_type;
 
 class MessageNode: public Node
 {
@@ -26,6 +30,7 @@ class MessageNode: public Node
   double p;  // the proportion of nodes in the graph that this node should
              // be friends with (approximately)
   int numNodes;
+  node_type type;  // collaborator or adversary?
 
  public:
   int *trust_distances;  // an array storing trust distances to all other nodes
@@ -46,9 +51,12 @@ class MessageNode: public Node
   bool hasReceivedMessage(long uuid);
   void initFriendships(int numNodes);
   void setFriendship(int friend_num, bool status);
-  //  double getP();
   int numFriends();
   int trustDistance(MessageNode *that);
+  void setType(node_type type, double probability);
+  node_type getType();
+  double getP();
+  void createNewMessage();
 };
 
 #endif /*MESSAGENODE_H_*/

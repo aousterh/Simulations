@@ -13,19 +13,35 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   this->pauseTime = 1;
   this->nodeId = nodeId;
   this->nextMessageId = 0;
-  this->MAX_MESSAGES = 10000;  // TODO: make this larger, small is good for debugging
+  this->MAX_MESSAGES = 100000;  // TODO: make this larger, small is good for debugging
   this->trust_distances = NULL;  // must be initialized by calling function
 
   messages = new vector<MessageData*>();
   message_set = new set<long>();
 
   // generate one message, created now, at the start
+  createNewMessage();
+}
+
+MessageNode::~MessageNode(){}
+
+void MessageNode::setType(node_type type, double probability)
+{
+  this->type = type;
+  this->p = probability;
+}
+
+node_type MessageNode::getType()
+{
+  return type;
+}
+
+void MessageNode::createNewMessage()
+{
   // create msg id by concatenating the node id and the message id
   long uuid = ((long) nodeId) * this->MAX_MESSAGES + nextMessageId++;
   insertMessage(new MessageData(uuid, this, 0, simTime->getTime(), true));
 }
-
-MessageNode::~MessageNode(){}
 
 void MessageNode::insertMessage(MessageData *msg)
 {
@@ -42,6 +58,11 @@ int MessageNode::getNodeId()
 int MessageNode::numTotalMessages()
 {
   return messages->size();
+}
+
+double MessageNode::getP()
+{
+  return p;
 }
 
 int MessageNode::numReceivedMessages()
@@ -86,8 +107,8 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num,
       MessageData *msg = (MessageData*) *rit;
 
       MessageNode *sender = msg->getSender();
-      if (that->trustDistance(sender) <= msg_trust_distance &&
-	  !that->hasReceivedMessage(msg->getUuid())) {
+      // don't check to see if received yet - just send it
+      if (that->trustDistance(sender) <= msg_trust_distance) {
 	that->ReceiveMessage(msg);
 	sent++;
       }
@@ -98,10 +119,13 @@ void MessageNode::ReceiveMessage(MessageData *msg)
 {
   if (messages->size() >= this->MAX_MESSAGES)
     printf("ERROR: cannot receive messages\n");
-  MessageData *newMsg = new MessageData(msg->getUuid(), msg->getSender(), 
-					simTime->getTime() - msg->getCreationTime(),
-					msg->getCreationTime(), false);
-  insertMessage(newMsg);
+  if (!this->hasReceivedMessage(msg->getUuid()))
+    {
+      MessageData *newMsg = new MessageData(msg->getUuid(), msg->getSender(), 
+					    simTime->getTime() - msg->getCreationTime(),
+					    msg->getCreationTime(), false);
+      insertMessage(newMsg);
+    }
 }
 
 bool MessageNode::hasReceivedMessage(long uuid)
@@ -124,13 +148,6 @@ void MessageNode::setFriendship(int friend_num, bool status)
 {
   trust_distances[friend_num] = 1;
 }
-
-/*
-double MessageNode::getP()
-{
-  return p;
-}
-*/
 
 int MessageNode::numFriends()
 {

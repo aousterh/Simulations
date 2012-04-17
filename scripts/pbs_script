@@ -2,7 +2,7 @@
 #
 # This is a script to run a simple simulation.
 #
-#PBS -l nodes=1:ppn=1,walltime=9:00:00
+#PBS -l nodes=1:ppn=1,walltime=1:00:00
 #PBS -M aousterh@princeton.edu
 #PBS -m abe
 #PBS -j oe

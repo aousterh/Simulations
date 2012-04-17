@@ -47,7 +47,7 @@ for f in $( ls ../configs/RWM_config_* ); do
     ./momose -f $f
     echo "Processing data for file: " $f
     cd ../../plotting
-    python process.py > ./data_$COUNT.csv
+    python process_provision.py "../momosecpp/output/messageRecorderOutput.csv" 6 > ./data_$COUNT.csv
     cd ../momosecpp/src
     cp ../output/messageRecorderOutput.csv ../output/messageRecorderOutput_$COUNT.csv
     let COUNT=COUNT+1

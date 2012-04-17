@@ -1,5 +1,5 @@
 """
-This file processes a list of (uuid, latency, trust distance) tuples into a
+This file processes a list of (uuid, latency, trust distance, recipient) tuples into a
 format that can easily be plotted - a list of x and y coordinates, so that
 each row is either x coordinates or y coordinates, alternating, with some
 header info at the top. This is the output format:
@@ -22,53 +22,39 @@ import csv
 file = sys.argv[1]
 
 reader = csv.reader(open(file, "rb"), delimiter=",")
+
 # skip 3 lines of info
 reader.next()
 reader.next()
 reader.next()
-row = reader.next()
 
 # note: this is not ideal!!
 num_adversaries = 0
-if len(argv) > 2:
-  num_adversaries = sys.argv[2]
-
-
-# dict of lists of tuples where each key corresponds to a trust distance, and the list is
-# of (uuid, latency) tuples with that trust distance
-count = 0
-all_data = {}
-for row in reader:
-  t = (int(row[0]), int(row[1])) 
-  td = int(row[2])
-  if td not in all_data:
-    all_data[td] = [t]
-  else:
-    l = all_data[td]
-    l.append(t)
-    all_data[td] = l
-  count = count + 1
-
-data_sets = []
-data_sets.append([])
-for x in range(1, max(all_data.keys()) + 1):
-  l = []
-  l.extend(data_sets[x-1])
-  l.extend(all_data[x])
-  data_sets.append(l)
+if len(sys.argv) > 2:
+  num_adversaries = int(sys.argv[2])
 
 # right now, extract 3 data sets for friends, friends + friends of friends, and all
 # data sets we want to plot
-plot_data_sets = []
-friends = data_sets[1]
+# each list is a list of (uuid, latency) tuples
+friends = []
 fof = []
 all_nodes = []
-if 2 in all_data:
-  fof = data_sets[2]
-  all_nodes = data_sets[len(data_sets)-1]
+for row in reader:
+  t = (int(row[0]), int(row[1])) 
+  td = int(row[2])
+  # we only care about messages sent by collaborators
+  if int(row[3]) >= num_adversaries:
+    if td <= 1:
+      friends.append(t)
+    if td <= 2:
+      fof.append(t)
+    all_nodes.append(t)
+
+plot_data_sets = [friends]
+if len(fof) > len(friends):
+  plot_data_sets = [friends, fof]
+if len(all_nodes) > len(fof):
   plot_data_sets = [friends, fof, all_nodes]
-else:
-  plot_data_sets = [friends]
 
 print len(plot_data_sets)
 
@@ -81,8 +67,6 @@ for data_set in plot_data_sets:
     data.append(t)
     uuid.add(t[0])
     latency.append(t[1])
-
-  data = sorted(data, key=lambda x: x[0])
 
   x_lists = [[x[1] for x in data if x[0] == i] for i in uuid]
 
@@ -104,13 +88,17 @@ for data_set in plot_data_sets:
     x_lists3.append(new_list)
 
   # determine the average number of nodes that received any given message
-  av = (1.0 * len(data_list)) / len(uuid)
+  #av = (1.0 * len(data_list)) / len(uuid)
 
-  l_0_01 = int(av*0.01)
-  l_0_10 = int(av*0.1)
-  l_0_50 = int(av*0.5)
-  l_0_90 = int(av*0.9)
-  l_0_99 = int(av*0.99)
+  l_0_01 = int(m*0.01)
+  l_0_10 = int(m*0.1)
+  l_0_50 = int(m*0.5)
+  l_0_90 = int(m*0.9)
+  l_0_99 = int(m*0.99)
+  if l_0_90 >= len(x_lists3):
+    l_0_90 = len(x_lists3) - 1
+  if l_0_99 >= len(x_lists3):
+    l_0_99 = len(x_lists3) - 1
 
   x_lists4 = [x_lists3[l_0_01], x_lists3[l_0_10], x_lists3[l_0_50], x_lists3[l_0_90], x_lists3[l_0_99]]
 
@@ -128,14 +116,6 @@ for data_set in plot_data_sets:
   print num_lists,
   print ",",
   print 0
-
-  """
-  for i in range(len(latency)):
-    print latency[i],
-    if i != len(latency) - 1:
-      print ",",
-  print
-  """
 
   for i in range(len(x_data)):
     if (len(x_data[i]) > 1):

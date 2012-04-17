@@ -119,9 +119,12 @@ void MessageRecorder::close()
 void MessageRecorder::writeMessageInfo()
 {
   outputFile<<"uuid, latency"<<endl;
+  int NUMBER_OF_ADVERSARIES = 6;
+
+  // skip nodes that are adversaries!!!
 
   vector<Node*>::iterator it;
-  for (it = nodes->begin(); it != nodes->end(); it++)
+  for (it = nodes->begin() + NUMBER_OF_ADVERSARIES; it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode *) *it;
       for (int i = 0; i < node->numTotalMessages(); i++)
@@ -130,9 +133,13 @@ void MessageRecorder::writeMessageInfo()
 	  // record this msg if it was not sent by this node
 	  if (!msg->wasOutgoing()) {
 	    MessageNode *sender = msg->getSender();
-	    int trust_dist = node->trustDistance(sender);
-	    // output the Uuid, latency, and trust distance (comma separated)
-	    outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< trust_dist <<endl;
+	    // we only care about messages sent by collaborators
+	    if (sender->getNodeId() >= NUMBER_OF_ADVERSARIES)
+	      {
+		int trust_dist = node->trustDistance(sender);
+		// output the Uuid, latency, and trust distance (comma separated)
+		outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< trust_dist << ", " << node->getNodeId() <<endl;
+	      }
 	  }
 	}
     }

@@ -38,7 +38,9 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
 
 void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 {
-   int i = 0;
+  double PERCENT_ADVERSARIES = 0.02;  // percent of total nodes that are adversaries
+  double ADVERSARY_PROBABILITY = probability * 0.25;  // probability that an adversary makes a friendship
+
   for (int i = 0; i < numNodes; i++)
     {
       lastNodeId++;
@@ -46,8 +48,17 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
       newNode->setAntennaRadius(antennaRadius);
       nodes.push_back(newNode);
       newNode->initFriendships(numNodes);
+      // some are adversaries, rest are collaborators
+      if (i < numNodes * PERCENT_ADVERSARIES)
+	newNode->setType(ADVERSARY, ADVERSARY_PROBABILITY);
+      else
+	newNode->setType(COLLABORATOR, probability);
     }
-  
+
+  // the average probability that a node makes a friendship
+  double average_p = PERCENT_ADVERSARIES * ADVERSARY_PROBABILITY + 
+    (1 - PERCENT_ADVERSARIES) * probability;
+
   // seed random number generator
   srand((unsigned) time(NULL));
 
@@ -60,8 +71,10 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 	{
 	  MessageNode *n2 = (MessageNode *) nodes[j];
 
+	  double friend_p = n1->getP() * n2->getP() / average_p;
+
 	  float random = (float) ((float) rand())/RAND_MAX;
-	  if (random <= probability)
+	  if (friend_p > random)
 	    {
 	      n1->setFriendship(j, true);
 	      n2->setFriendship(i, true);
@@ -76,7 +89,20 @@ void MessageModel::think(SimTime *simTime)
 {
   // TODO: any node could be receiving from many others at once, although
   // each only sends to one other node at once
+  double MSG_CREATION_PROBABILITY = 0.01;
 
+  // adversaries create new messages
+  for (int i = 0; i < numNodes; i++)
+    {
+      MessageNode *node = (MessageNode*) nodes[i];
+      if (node->getType() == ADVERSARY)
+	{
+	  // create new message with some probability
+	  double random = ((float) rand()) / RAND_MAX;
+	  if (random < MSG_CREATION_PROBABILITY)
+	    node->createNewMessage();
+	}
+    }
 
   for (int i = 0; i < numNodes; i++)
     {
