@@ -1,5 +1,5 @@
 """
-This file processes a list of (uuid, latency, trust distance, recipient) tuples into a
+This file processes a list of (uuid, latency, sender, recipient) tuples into a
 format that can easily be plotted - a list of x and y coordinates, so that
 each row is either x coordinates or y coordinates, alternating, with some
 header info at the top. This is the output format:
@@ -25,37 +25,29 @@ reader = csv.reader(open(file, "rb"), delimiter=",")
 
 # skip 3 lines of info
 reader.next()
-reader.next()
+row2 = reader.next()
+num_nodes = int(row2[1])
+num_adversaries = int(row2[2])
 reader.next()
 
-# note: this is not ideal!!
-num_adversaries = 0
-if len(sys.argv) > 2:
-  num_adversaries = int(sys.argv[2])
-
-# right now, extract 3 data sets for friends, friends + friends of friends, and all
-# data sets we want to plot
-# each list is a list of (uuid, latency) tuples
-friends = []
-fof = []
-all_nodes = []
+# two lists - one of msgs sent by collaborators, the other of msgs sent by adversaries
+# each list is a list of (uuid, latency) tuple
+collaborators = []  # msgs sent by collaborators
+adversaries = []  # msgs sent by adversaries
+node_ids = set()
 for row in reader:
+  node_ids.add(3)
   t = (int(row[0]), int(row[1])) 
-  td = int(row[2])
-  # we only care about messages sent by collaborators
-  if td <= 1:
-    friends.append(t)
-  if td <= 2:
-    fof.append(t)
-  all_nodes.append(t)
+  # only care about msgs received by collaborators
+  if int(row[3]) >= num_adversaries:
+    if int(row[2]) >= num_adversaries:
+      collaborators.append(t)
+    else:
+      adversaries.append(t)
 
-plot_data_sets = [friends]
-if len(fof) > len(friends):
-  plot_data_sets = [friends, fof]
-if len(all_nodes) > len(fof):
-  plot_data_sets = [friends, fof, all_nodes]
-
-print len(plot_data_sets)
+plot_data_sets = [collaborators, adversaries]
+completion_lists = []
+print len(plot_data_sets) + 1
 
 for data_set in plot_data_sets:
   data_list = data_set
@@ -67,6 +59,8 @@ for data_set in plot_data_sets:
     uuid.add(t[0])
     latency.append(t[1])
 
+  # generate a list of latency lists where each latency list is all the
+  # first latencies for one msg
   x_lists = [[x[1] for x in data if x[0] == i] for i in uuid]
 
   # sort the lists - each list is a list of latencies for one message
@@ -87,11 +81,16 @@ for data_set in plot_data_sets:
       if index >= len(lat_list):
         index = len(lat_list) - 1
       x_lists3[i].append(lat_list[index])
-    
+
   x_data = [sorted(list(set(x))) for x in x_lists3]
 
   y_data = [[1.0 * x_lists3[i].count(c) / m for c in x_data[i]] for i in range(len(x_lists3))]
   y_data = [list(np.cumsum(x)) for x in y_data]
+
+
+  # what percentage of nodes received each msg
+  num_completed = [len(x) for x in x_lists]
+  completion_lists.append(num_completed)
 
 
   num_lists = 0
@@ -99,9 +98,7 @@ for data_set in plot_data_sets:
     if len(x_data[i]) > 1:
       num_lists = num_lists + 1
 
-  print num_lists,
-  print ",",
-  print 0
+  print num_lists
 
   for i in range(len(x_data)):
     if (len(x_data[i]) > 1):
@@ -118,3 +115,29 @@ for data_set in plot_data_sets:
     else:
       print ""
       print ""
+
+
+# print out completion percentage CDF data
+x_data = [sorted(list(set(x))) for x in completion_lists]
+
+y_data = [[1.0 * completion_lists[i].count(c)/len(completion_lists[i]) for c in x_data[i]] for i in range(len(completion_lists))]
+y_data = [list(np.cumsum(x)) for x in y_data]
+
+print 2
+
+for i in range(len(x_data)):
+  if (len(x_data[i]) > 1):
+    for j in range(len(x_data[i])):
+      print x_data[i][j],
+      if j != len(x_data[i]) - 1:
+        print ",",
+    print
+    for j in range(len(y_data[i])):
+      print y_data[i][j],
+      if j != len(y_data[i]) - 1:
+        print ",",
+    print
+  else:
+    print ""
+    print ""
+

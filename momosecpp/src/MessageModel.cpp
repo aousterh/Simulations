@@ -32,42 +32,61 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
   this->msg_trust_distance = msg_trust_distance;
   this->node_exchange_num = node_exchange_num;
   this->msg_exchange_num = msg_exchange_num;
-  this->percent_adversaries = percent_adversaries;
+  this->num_adversaries = percent_adversaries * numNodes;
   this->adversary_probability = adversary_probability;
   this->adversary_msg_creation_probability = adversary_msg_creation_probability;
   this->collaborator_msg_creation_probability = collaborator_msg_creation_probability;
 
-
   isPhysical = true;
   setThinkerProp(true);
+
+  srand((unsigned) time(NULL));
 }
 
 
 void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 {
-  //  double PERCENT_ADVERSARIES = 0.02;  // percent of total nodes that are adversaries
-  //double ADVERSARY_PROBABILITY = probability * 0.25;  // probability that an adversary makes a friendship
-
   for (int i = 0; i < numNodes; i++)
     {
       lastNodeId++;
       MessageNode *newNode = CreateMessageNode(scenario, simTime);
       newNode->setAntennaRadius(antennaRadius);
       nodes.push_back(newNode);
-      newNode->initFriendships(numNodes);
-      // some are adversaries, rest are collaborators
-      if (i < numNodes * percent_adversaries)
-	newNode->setType(ADVERSARY, adversary_probability);
+      // the first num_adversaries are adversaries, rest are collaborators
+     
+      if (i < num_adversaries)
+	{
+	  newNode->setType(ADVERSARY);
+	  // adversaries start with 5 messages - make this configurable!!! start fixed
+	  for (int i = 0; i < 5; i++)
+	    newNode->createNewMessage();
+	}
       else
-	newNode->setType(COLLABORATOR, probability);
+	{
+	  newNode->setType(COLLABORATOR);
+	  newNode->createNewMessage();
+	}
+      newNode->initFriendships(numNodes, num_adversaries);
     }
 
-  // the average probability that a node makes a friendship
+  // check stuff
+  /*  printf("CHECKING FRIENDSHIPS\n");
+  for (int i = 0; i < numNodes; i++)
+    {
+      MessageNode *node = (MessageNode *) nodes[i];
+      printf("\nfriends of node %d: ", i);
+      for (int j = 0; j < numNodes; j++)
+	printf("%d, ", node->trust_distances[j]);
+	}*/
+
+
+
+  /*  // the average probability that a node makes a friendship
   double average_p = percent_adversaries * adversary_probability + 
     (1 - percent_adversaries) * probability;
 
   // seed random number generator
-  srand((unsigned) time(NULL));
+ // srand((unsigned) time(NULL));
 
   // assign friendships
   for (int i = 0; i < numNodes - 1; i++)
@@ -89,7 +108,18 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
 	}
     }
 
-  computeTrustDistances();
+    computeTrustDistances();*/
+
+  /*    for (int i = 0; i < numNodes; i++)
+    {
+      MessageNode *n = (MessageNode *) nodes[i];
+      printf("\nfriends of: %d\n", i);
+
+      for (int j = 0; j < numNodes; j++)
+	{
+	  printf("%d, ", n->trust_distances[j]);
+	}
+	}*/
 }
 
 void MessageModel::think(SimTime *simTime)
@@ -98,34 +128,54 @@ void MessageModel::think(SimTime *simTime)
   // each only sends to one other node at once
   // double ADVERSARY_MSG_CREATION_PROBABILITY = 0.1;
 
+  // SIMPLEST MODEL: NO DYNAMIC CREATION OF MESSAGES
+
+  /*
   // adversaries create new messages
-  for (int i = 0; i < numNodes; i++)
+  for (int i = 0; i < numNodes * percent_adversaries; i++)
     {
       MessageNode *node = (MessageNode*) nodes[i];
-      if (node->getType() == ADVERSARY)
-	{
-	  // create new message with some probability
-	  double random = ((float) rand()) / RAND_MAX;
-	  if (random < adversary_msg_creation_probability)
-	    node->createNewMessage();
-	}
+      // create new message with some probability
+      double random = ((float) rand()) / RAND_MAX;
+      if (random < adversary_msg_creation_probability)
+	node->createNewMessage();
     }
+  */
+  /*  if (t == 500)
+    {
+      // have normal nodes create their messages if at t=100
+      for (int i = numNodes * percent_adversaries; i < numNodes; i++)
+	{
+	  MessageNode *node = (MessageNode *) nodes[i];
+	  node->createNewMessage();
+	}
+	}*/
+  /*  for (int i = 0; i < numNodes; i++)
+    {
+      MessageNode *n1 = (MessageNode *) nodes[i];
+      printf("Node %d: %f %f\n", n1->getNodeId(), n1->getPosition().x, n1->getPosition().y);
+    }
+    printf("\n");*/
 
+  /*  static int t = 0;
+  printf("TIMESTEP: %d\n", t);
+  t++;*/
+
+
+  // push to one node at a time, selected randomly from those within range
   for (int i = 0; i < numNodes; i++)
     {
       MessageNode *node1 = (MessageNode*) nodes[i];
       
-      // obtain nodes within physical and trust distances, to determine
-      // which nodes to exchange with
+      // obtain nodes within physical distance, to determine
+      // which node to exchange with
       vector<Node*> potentials;
       for (int j = 0; j < numNodes; j++)
 	{
 	  if (j != i)
 	    {
 	      MessageNode *node2 = (MessageNode*) nodes[j];
-	      if (node1->distanceTo(node2) <= EXCHANGE_DISTANCE &&
-		  node1->trustDistance(node2) <= node_trust_distance &&
-		  node1->trustDistance(node2) > 0) {
+	      if (node1->distanceTo(node2) <= EXCHANGE_DISTANCE) {
 		potentials.push_back(node2);
 	      }
 	    }
@@ -134,18 +184,18 @@ void MessageModel::think(SimTime *simTime)
       // TODO: messages could travel many hops in one timestep if
       // there are big groups of connected components . . . does this happen?
       // choose a random node to send messages to - push model
-      int exchanges_left = node_exchange_num;
-      while (exchanges_left > 0 && potentials.size() > 0)
+
+      // only push messages to one node for now
+      if (potentials.size() > 0)
 	{
 	  int index = ((float) rand()) / RAND_MAX * potentials.size();
 	  MessageNode *node2 = (MessageNode *) potentials[index];
-	  node1->pushMessagesTo(node2, msg_exchange_num, msg_trust_distance);  // send messages to node2
-	  potentials.erase(potentials.begin() + index);
+	  node1->pushMessagesTo(node2, msg_exchange_num);  // send messages to node2
 	}
     }
 }
 
-void MessageModel::computeTrustDistances()
+/*void MessageModel::computeTrustDistances()
 {
   for (int i = 0; i < numNodes; i++)
     {
@@ -179,9 +229,10 @@ void MessageModel::computeTrustDistances()
 	{
 	  printf("%d ", node->trust_distances[j]);
 	}
+	}
 	}*/
-}
 
+/*
 void MessageModel::BFS(MessageNode *root)
 {
   // queue of <nodeId, distance>
@@ -207,7 +258,7 @@ void MessageModel::BFS(MessageNode *root)
 
       for (int i = 0; i < numNodes; i++)
 	{
-	  /* we only recurse and compute for trust distances of 1 */
+	  // we only recurse and compute for trust distances of 1
 	  if ((node->trust_distances[i] == 1) && (root->trust_distances[i] == -1)) // aka we haven't visited i before, but currentNodeId is friends with them
 	    {
 	      nodeIds.push(make_pair(i, currentDistance + 1));	      
@@ -215,6 +266,4 @@ void MessageModel::BFS(MessageNode *root)
 	}
     }
 
-}
-
-
+}*/

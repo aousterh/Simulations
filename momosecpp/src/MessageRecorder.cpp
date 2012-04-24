@@ -79,8 +79,17 @@ void MessageRecorder::writeStaticInfo(SimTime *simTime, Scenario *scenario)
   
 void MessageRecorder::writeBaseNode() 
 {
+  int adversaries = 0;
+  vector<Node*>::iterator it;
+  for(it = nodes->begin(); it != nodes->end(); it++)
+    {
+      MessageNode *node = (MessageNode*) (*it);
+      if (node->getType() == ADVERSARY)
+	adversaries++;
+    }
+
   // write the number of nodes
-  outputFile<<"Num nodes: "<<nodes->size()<<endl;
+  outputFile<<"Num nodes, "<<nodes->size()<<", "<< adversaries<<endl;
   
 } // end writeBaseNode
  
@@ -119,31 +128,29 @@ void MessageRecorder::close()
 void MessageRecorder::writeMessageInfo()
 {
   outputFile<<"uuid, latency"<<endl;
-  int NUMBER_OF_ADVERSARIES = 6;
 
   // skip nodes that are adversaries!!!
-
   vector<Node*>::iterator it;
-  for (it = nodes->begin() + NUMBER_OF_ADVERSARIES; it != nodes->end(); it++)
+  for (it = nodes->begin(); it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode *) *it;
-      for (int i = 0; i < node->numTotalMessages(); i++)
+      
+      map<long, MessageData*> *message_map = node->getMessageMap();
+      map<long, MessageData*>::iterator map_it;
+      for (map_it = message_map->begin(); map_it != message_map->end(); map_it++)
 	{
-	  MessageData *msg = node->getMessage(i);
-	  // record this msg if it was not sent by this node
+	  MessageData *msg = (*map_it).second;
+	  	  // record this msg if it was not sent by this node
 	  if (!msg->wasOutgoing()) {
 	    MessageNode *sender = msg->getSender();
-	    // we only care about messages sent by collaborators
-	    if (sender->getNodeId() >= NUMBER_OF_ADVERSARIES)
-	      {
-		int trust_dist = node->trustDistance(sender);
-		// output the Uuid, latency, and trust distance (comma separated)
-		outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< trust_dist << ", " << node->getNodeId() <<endl;
-	      }
+	    int trust_dist = node->trustDistance(sender);
+	    // output the msg uuid, latency, sender id, recipient id
+	    outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< msg->getSender()->getNodeId() <<", "<<node->getNodeId() <<endl;
 	  }
-	}
-    }
 
+	}
+
+    }
 
   /*
   int numNodes = nodes->size();

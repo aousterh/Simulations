@@ -159,7 +159,7 @@ void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** at
       if(str=="msgexnum")
 	 { actTag=MessageModelParser::MSGEXCHANGENUM; } 		    
             
-      if(str=="%adversaries")
+      if(str=="perc_adversaries")
 	 { actTag=MessageModelParser::PERCENTADVERSARIES; } 		    
 
       if(str=="adversary_prob")

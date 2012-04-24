@@ -10,7 +10,6 @@ RandomWaypointMessageNode::RandomWaypointMessageNode(Point2D pos, const float &r
   pause=true;
   target = new Point2D();
   this->scenario = scenario;
-  //  srand((unsigned) time(NULL));
 }
 
 RandomWaypointMessageNode::~RandomWaypointMessageNode(){}

@@ -1,6 +1,8 @@
 #include"RandomWaypointMessageModelBuilder.h"
 #include"RandomWaypointMessageModel.h"
 
+#include <stdio.h>
+
 Model* RandomWaypointMessageModelBuilder::create() 
 {
   RandomWaypointMessageModel *randomWaypointMessageModel=new RandomWaypointMessageModel();

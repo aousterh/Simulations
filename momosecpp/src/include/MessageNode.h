@@ -1,7 +1,7 @@
 #ifndef MESSAGENODE_H_
 #define MESSAGENODE_H_
 
-#include <set>
+#include <map>
 #include <vector>
 
 #include"MessageData.h"
@@ -23,8 +23,8 @@ class MessageNode: public Node
   float pauseTime;  
   float vMax;
   float vMin;
-  vector<MessageData*> *messages;
-  set<long> *message_set;  // set of all message uuid's that have been received
+  vector<long> *messages;  // list of uuids in order from most recently received to least recent
+  map<long, MessageData*> *message_map;  // map from all message uuid's that have been received to the msg
   SimTime *simTime;
   int MAX_MESSAGES;  // should be max value eventually, and static!
   double p;  // the proportion of nodes in the graph that this node should
@@ -40,20 +40,20 @@ class MessageNode: public Node
   MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *simTime);
   virtual ~MessageNode();
 	
-  void insertMessage(MessageData *msg);
+  void insertMessage(MessageData *msg, float latency);
   int getNodeId();
   int numTotalMessages();
   int numReceivedMessages();
-  MessageData *getMessage(int index);
+  map<long, MessageData*> *getMessageMap();
   float distanceTo(MessageNode *that);
-  void pushMessagesTo(MessageNode *that, int msg_exchange_num, int msg_trust_distance);
+  void pushMessagesTo(MessageNode *that, int msg_exchange_num);
   void ReceiveMessage(MessageData *msg);
   bool hasReceivedMessage(long uuid);
-  void initFriendships(int numNodes);
+  void initFriendships(int numNodes, int num_adversaries);
   void setFriendship(int friend_num, bool status);
   int numFriends();
   int trustDistance(MessageNode *that);
-  void setType(node_type type, double probability);
+  void setType(node_type type);
   node_type getType();
   double getP();
   void createNewMessage();

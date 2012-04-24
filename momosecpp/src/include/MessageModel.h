@@ -24,7 +24,7 @@ class MessageModel:public Model
 	int msg_trust_distance;  // max trust distance of any sender of any msg we recieve
 	int node_exchange_num;  // number of nodes to exchange with at once
 	int msg_exchange_num;  // number of messages to send at once to another node
-	double percent_adversaries;
+	int num_adversaries;
 	double adversary_probability;
 	double adversary_msg_creation_probability;
 	double collaborator_msg_creation_probability;
@@ -40,9 +40,9 @@ class MessageModel:public Model
 	void setup(Scenario *scenario, SimTime *simTime);
 	void think(SimTime *simTime);
 
- private:
+	/* private:
 	void computeTrustDistances();
-	void BFS(MessageNode *root);
+	void BFS(MessageNode *root); */
 
 	// Virtual methods
 	virtual MessageNode *CreateMessageNode(Scenario *scenario, SimTime *time){}
