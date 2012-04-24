@@ -20,43 +20,35 @@ fig1 = plt.figure()
 reader = csv.reader(open(file, "rb"), delimiter=",")
 #column = np.genfromtxt(file, delimiter=",", usecols=(0))
 row0 = reader.next()
-print row0
+
 #column = column.tolist()
 num_groups = int(row0[0])
 lines_per_group = 5   # TODO: don't hard code this
-num_lines = num_groups * lines_per_group
 
 
 for group in range(num_groups):
-  # fix at 3 sub-plots
-  sub = fig1.add_subplot(3, 1, group + 1)
+  sub = fig1.add_subplot(num_groups, 1, group + 1)
   
   x_max = 0
   
   # read in first line to figure out how many real lines there are
   row = reader.next()
-  print row
   actual_lines = int(row[0])
-  print actual_lines
 
-  for i in range(lines_per_group):
+  for i in range(actual_lines):
     x_data = reader.next()
     y_data = reader.next()
     x_data = [int(x) for x in x_data]
     y_data = [float(y) for y in y_data]
 
-    print len(x_data)
-    print len(y_data)
+    sub.plot(x_data, y_data, '-')
+    try:
+      if max(x_data) > x_max:
+        x_max = max(x_data)
+    except:
+      x_max = x_max
 
-    if i < actual_lines:
-      sub.plot(x_data, y_data, '-')
-      try:
-        if max(x_data) > x_max:
-          x_max = max(x_data)
-      except:
-        x_max = x_max
-
-  if len(sys.argv) > 2:
+  if len(sys.argv) > 2 and group < 2:
     x_max = int(sys.argv[2])
   sub.set_xlim(0, x_max)
   sub.set_ylim(0, 1)
