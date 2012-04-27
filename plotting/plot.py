@@ -28,9 +28,8 @@ lines_per_group = 5   # TODO: don't hard code this
 
 for group in range(num_groups):
   sub = fig1.add_subplot(num_groups, 1, group + 1)
-  
   x_max = 0
-  
+
   # read in first line to figure out how many real lines there are
   row = reader.next()
   actual_lines = int(row[0])
@@ -48,9 +47,18 @@ for group in range(num_groups):
     except:
       x_max = x_max
 
+  if group < 2:
+    for i in range(lines_per_group - actual_lines):
+      reader.next();
+      reader.next();
+
   if len(sys.argv) > 2 and group < 2:
     x_max = int(sys.argv[2])
   sub.set_xlim(0, x_max)
   sub.set_ylim(0, 1)
+
+  if group < 2:
+    sub.set_xlabel("Latency (timesteps)")
+    sub.set_ylabel("Percent of Messages")
 
 plt.show()
