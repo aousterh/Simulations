@@ -46,7 +46,7 @@ class MessageNode: public Node
   int numReceivedMessages();
   map<long, MessageData*> *getMessageMap();
   float distanceTo(MessageNode *that);
-  void pushMessagesTo(MessageNode *that, int msg_exchange_num);
+  void pushMessagesTo(MessageNode *that, int msg_exchange_num, bool use_friendships);
   void ReceiveMessage(MessageData *msg);
   bool hasReceivedMessage(long uuid);
   void initFriendships(int numNodes, int num_adversaries);

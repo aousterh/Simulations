@@ -12,6 +12,7 @@ Model* RandomWalkMessageModelBuilder::create()
 				   configParser->getNodeExchangeNum(), configParser->getMsgExchangeNum(),
 				   configParser->getPercentAdversaries(), configParser->getAdversaryProbability(),
 				   configParser->getAdversaryMsgCreationProbability(),
-				   configParser->getCollaboratorMsgCreationProbability());
+				   configParser->getCollaboratorMsgCreationProbability(),
+				   configParser->getUseFriendships());
   return randomWalkMessageModel; 
 }

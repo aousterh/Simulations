@@ -18,7 +18,8 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
 			    int msg_trust_distance, int node_exchange_num,
 			    int msg_exchange_num, float percent_adversaries,
 			    float adversary_probability, float adversary_msg_creation_probability,
-			    float collaborator_msg_creation_probability)
+			    float collaborator_msg_creation_probability,
+			    bool use_friendships)
 {
   this->numNodes = numNodes;
   this->nodeRadius = nodeRadius;
@@ -36,6 +37,7 @@ void MessageModel::setModel(int numNodes, float nodeRadius, float antennaRadius,
   this->adversary_probability = adversary_probability;
   this->adversary_msg_creation_probability = adversary_msg_creation_probability;
   this->collaborator_msg_creation_probability = collaborator_msg_creation_probability;
+  this->use_friendships = use_friendships;
 
   isPhysical = true;
   setThinkerProp(true);
@@ -57,14 +59,14 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
       if (i < num_adversaries)
 	{
 	  newNode->setType(ADVERSARY);
-	  // adversaries start with 5 messages - make this configurable!!! start fixed
+	  /* // adversaries start with 5 messages - make this configurable!!! start fixed
 	  for (int i = 0; i < 5; i++)
-	    newNode->createNewMessage();
+	  newNode->createNewMessage();*/
 	}
       else
 	{
 	  newNode->setType(COLLABORATOR);
-	  newNode->createNewMessage();
+	  //  newNode->createNewMessage();
 	}
       newNode->initFriendships(numNodes, num_adversaries);
     }
@@ -128,19 +130,21 @@ void MessageModel::think(SimTime *simTime)
   // each only sends to one other node at once
   // double ADVERSARY_MSG_CREATION_PROBABILITY = 0.1;
 
-  // SIMPLEST MODEL: NO DYNAMIC CREATION OF MESSAGES
+  // DYNAMIC CREATION OF MESSAGES
 
-  /*
-  // adversaries create new messages
-  for (int i = 0; i < numNodes * percent_adversaries; i++)
+  // all nodes create new messages with a specified probability
+  for (int i = 0; i < numNodes; i++)
     {
       MessageNode *node = (MessageNode*) nodes[i];
       // create new message with some probability
       double random = ((float) rand()) / RAND_MAX;
-      if (random < adversary_msg_creation_probability)
-	node->createNewMessage();
+      if ((node->getType() == ADVERSARY && random < adversary_msg_creation_probability)
+	  || (node->getType() == COLLABORATOR && random < collaborator_msg_creation_probability))
+	{
+	  node->createNewMessage();
+	}
     }
-  */
+ 
   /*  if (t == 500)
     {
       // have normal nodes create their messages if at t=100
@@ -190,7 +194,7 @@ void MessageModel::think(SimTime *simTime)
 	{
 	  int index = ((float) rand()) / RAND_MAX * potentials.size();
 	  MessageNode *node2 = (MessageNode *) potentials[index];
-	  node1->pushMessagesTo(node2, msg_exchange_num);  // send messages to node2
+	  node1->pushMessagesTo(node2, msg_exchange_num, use_friendships);  // send messages to node2
 	}
     }
 }

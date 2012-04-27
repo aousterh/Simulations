@@ -28,6 +28,7 @@ class MessageModel:public Model
 	double adversary_probability;
 	double adversary_msg_creation_probability;
 	double collaborator_msg_creation_probability;
+	bool use_friendships;
   
  public:
 	void setModel(int numNodes, float nodeRadius, float antennaRadius,
@@ -36,7 +37,7 @@ class MessageModel:public Model
 		      int msg_trust_distance, int node_exchange_num,
 		      int msg_exchange_num,  float percent_adversaries,
 		      float adversary_probability, float adversary_msg_creation_probability,
-		      float collaborator_msg_creation_probability);
+		      float collaborator_msg_creation_probability, bool use_friendships);
 	void setup(Scenario *scenario, SimTime *simTime);
 	void think(SimTime *simTime);
 

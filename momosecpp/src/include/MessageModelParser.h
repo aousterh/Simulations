@@ -21,7 +21,7 @@ class MessageModelParser: public ModelParser
       static const int ADVERSARYPROBABILITY=14;  // probability that adversaries form friendships
       static const int ADVERSARYMSGCREATIONPROBABILITY=15;
       static const int COLLABORATORMSGCREATIONPROBABILITY=16;
-
+      static const int USEFRIENDSHIPS=17;
 
    protected:
 	float pauseTime;	
@@ -36,6 +36,7 @@ class MessageModelParser: public ModelParser
         float adversary_probability;
         float adversary_msg_creation_probability;
         float collaborator_msg_creation_probability;
+	bool use_friendships;   // 0 if friend traffic should not be sent first, 1 if it should
 
    public:
       MessageModelParser();
@@ -54,7 +55,7 @@ class MessageModelParser: public ModelParser
       float getAdversaryProbability();
       float getAdversaryMsgCreationProbability();
       float getCollaboratorMsgCreationProbability();
-   
+      bool getUseFriendships();
       
       void OnStartElement(const XML_Char* name, const XML_Char** attrs);
       void OnEndElement(const XML_Char* name);

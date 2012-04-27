@@ -124,6 +124,14 @@ float MessageModelParser::getCollaboratorMsgCreationProbability()
        return collaborator_msg_creation_probability;		
    } // end getCollaboratorMsgCreationProbability
 
+
+bool MessageModelParser::getUseFriendships()
+{
+  return use_friendships;
+} // end getUseFriendships 
+
+
+
 	
 void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** attrs)
   {
@@ -170,6 +178,9 @@ void MessageModelParser::OnStartElement(const XML_Char* name,const XML_Char** at
 
       if(str=="collab_msg_prob")
 	 { actTag=MessageModelParser::COLLABORATORMSGCREATIONPROBABILITY; } 		    
+
+      if(str=="use_f")
+	 { actTag=MessageModelParser::USEFRIENDSHIPS; } 		    
 
 
   }//Fine OnStartElement	
@@ -254,6 +265,13 @@ void MessageModelParser::OnCharacterData(const XML_Char* data, int len)
     if(actTag==MessageModelParser::COLLABORATORMSGCREATIONPROBABILITY) 
       { 
 	collaborator_msg_creation_probability=stringToFloat(str);
+	actTag=-1;
+      }
+    
+    if(actTag==MessageModelParser::USEFRIENDSHIPS) 
+      { 
+	int use_f=stringToInt(str);
+	use_friendships = (use_f == 1);
 	actTag=-1;
       }
 

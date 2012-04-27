@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "MessageData.h"
 #include "MessageNode.h"
@@ -13,7 +14,7 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   this->pauseTime = 1;
   this->nodeId = nodeId;
   this->nextMessageId = 0;
-  this->MAX_MESSAGES = 100000;  // TODO: make this larger, small is good for debugging
+  this->MAX_MESSAGES = INT_MAX;  // TODO: make this larger, small is good for debugging
   this->trust_distances = NULL;  // must be initialized by calling function
 
   messages = new vector<long>();
@@ -89,7 +90,7 @@ float MessageNode::distanceTo(MessageNode *that)
   return this->pos.distance(that->getPosition());
 }
 
-void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num)
+void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num, bool use_friendships)
 {
   // this Node sends messages to that Node
   // send the most recent msg_exchange_num messages
@@ -107,27 +108,28 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num)
       MessageData *msg = (MessageData*) (*message_map)[uuid];
       MessageNode *sender = msg->getSender();
       // printf("%d, %d\n", uuid, sender->getNodeId());
-      if (this->trustDistance(sender) != -1)
+      if (this->trustDistance(sender) != -1 || !use_friendships)
 	{
 	  msgs_to_send.push_back(msg);
 	  sent++;
 	}
     }
 
- 
-  // send msgs from adversaries if there is leftover capacity
-    while (rit < messages->rend() && sent < msg_exchange_num)
+  if (this->type != ADVERSARY && use_friendships)
     {
-      long uuid = (long) *(rit++);
-      MessageData *msg = (MessageData*) (*message_map)[uuid];
-      MessageNode *sender = msg->getSender();
-      if (this->trustDistance(sender) == -1)
+      // send msgs from adversaries if there is leftover capacity
+      while (rit < messages->rend() && sent < msg_exchange_num)
 	{
-	  msgs_to_send.push_back(msg);
-	  sent++;
+	  long uuid = (long) *(rit++);
+	  MessageData *msg = (MessageData*) (*message_map)[uuid];
+	  MessageNode *sender = msg->getSender();
+	  if (this->trustDistance(sender) == -1)
+	    {
+	      msgs_to_send.push_back(msg);
+	      sent++;
+	    }
 	}
     }
-
 
   // send all msgs in reverse order so that their importance order is preserved
   for (int i = msgs_to_send.size() - 1; i >= 0; i--)

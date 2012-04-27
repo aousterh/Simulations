@@ -304,7 +304,7 @@ void SimulationManager::setModelBuilders()
      modelsBuilders->push_back(new RandomWalkMessageModelBuilder("Random Walk Message Model"));
      modelsBuilders->push_back(new RandomWalkModelBuilder("Random walk Model"));
      modelsBuilders->push_back(new RandomWaypointModelBuilder("Random waypoint Model")); 
-     modelsBuilders->push_back(new RandomWaypointMessageModelBuilder("Random Waypoint Message Model")); 
+     modelsBuilders->push_back(new RandomWaypointMessageModelBuilder("Random_Waypoint_Message_Model")); 
      modelsBuilders->push_back(new EraModelBuilder("ERA Model")); 
      modelsBuilders->push_back(new HotSpotModelBuilder("Hot-Spot Model")); 
      modelsBuilders->push_back(new NomadicModelBuilder("Nomadic Model")); 
@@ -316,7 +316,7 @@ void SimulationManager::setModelBuilders()
   void SimulationManager::setRecorderBuilders()
    {
      recordersBuilders->push_back(new ViewerRecorderBuilder("Viewer recorder"));  
-     recordersBuilders->push_back(new MessageRecorderBuilder("Message recorder"));  
+     recordersBuilders->push_back(new MessageRecorderBuilder("Message_recorder"));  
      //recordersBuilders->push_back(new DebugRecorderBuilder("Debug recorder")); 
      //Insert here new DataRecorderBuilder
 	//recoredersBuilder->push_back(new NewDataRecorderBuilder());  

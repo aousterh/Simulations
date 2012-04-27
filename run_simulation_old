@@ -16,45 +16,46 @@
 # java -cp ./bin:./lib/gluegen-rt.jar:./lib/jogl.jar -Djava.library.path=./lib gui.Momose -d32
 #
 #---------------------------------------------------------
-
-# MAKE SURE YOU GET THE NUMBER RIGHT IN THE MESSAGE_RECORDER FILE!!!!!
-
 C2="c2"
 COUNT=0
-NUM="$1"
-
 
 # add libraries to be preloaded if running on c2
-if [ "$2" = $C2 ]; then
+if [ "$1" = $C2 ]; then
     export LD_PRELOAD="./../extlibs/expat/lib/libexpat.so.1"
     echo $LD_PRELOAD
 fi
 
-# NUM should be a number for this sim - make a new directory for it and copy the configs into it
-mkdir sim_$NUM
-
-for f in $( ls ./momosecpp/configs/*RWM_config_* ); do
-  cp $f sim_"$1"
+# remove existing data files
+for f in $( ls ./plotting/data_* ); do
+    echo "Removing data file: " $f
+    rm -f $f
 done
 
-# run momose and process the output into Simulations/sim_0X/data_??.csv
+# removing temp files in configs directory
+echo "Removing temp files in configs directory"
+cd ./momosecpp/configs
+rm -f *~
+cd ../..
+
+
+# run momose and process the output into ./plotting/data_??.csv
 # where ?? is a number
 echo "Running the simulation"
 cd ./momosecpp/src
-for f in $( ls ../../sim_"$1"/RWM_config_* ); do
+for f in $( ls ../configs/RWM_config_* ); do
     echo "Running sim for file: " $f
     ./momose -f $f
     echo "Processing data for file: " $f
     cd ../../plotting
-    python process_dos.py "../momosecpp/output/messageRecorderOutput_$1.csv" > ../sim_"$1"/data_$COUNT.csv
+    python process_dos.py "../momosecpp/output/messageRecorderOutput.csv" > ./data_$COUNT.csv
     cd ../momosecpp/src
+    cp ../output/messageRecorderOutput.csv ../output/messageRecorderOutput_$COUNT.csv
     let COUNT=COUNT+1
 done
 
 cd ../..
 
-cd sim_"$1"
-rm -f archive.tar
-tar -cf archive.tar data_* *config_*
+cd plotting
+rm -f data_archive.tar
+tar -cf data_archive.tar data_*
 cd ..
-

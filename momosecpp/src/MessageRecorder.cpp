@@ -129,8 +129,25 @@ void MessageRecorder::writeMessageInfo()
 {
   outputFile<<"uuid, latency"<<endl;
 
-  // skip nodes that are adversaries!!!
+  float max_creation_time = 0;
   vector<Node*>::iterator it;
+  for (it = nodes->begin(); it != nodes->end(); it++)
+    {
+      MessageNode *node = (MessageNode *) *it;
+
+      map<long, MessageData*> *message_map = node->getMessageMap();
+      map<long, MessageData*>::iterator map_it;
+      for (map_it = message_map->begin(); map_it != message_map->end(); map_it++)
+	{
+	  MessageData *msg = (*map_it).second;
+	  if (msg->getCreationTime() > max_creation_time)
+	    max_creation_time = msg->getCreationTime();
+	}
+    }
+
+  float min_time = 0.2 * max_creation_time;
+  float max_time = 0.8 * max_creation_time;
+
   for (it = nodes->begin(); it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode *) *it;
@@ -141,9 +158,9 @@ void MessageRecorder::writeMessageInfo()
 	{
 	  MessageData *msg = (*map_it).second;
 	  	  // record this msg if it was not sent by this node
-	  if (!msg->wasOutgoing()) {
+	  if (!msg->wasOutgoing() && (msg->getCreationTime() > min_time &&
+				      msg->getCreationTime() < max_time)) {
 	    MessageNode *sender = msg->getSender();
-	    int trust_dist = node->trustDistance(sender);
 	    // output the msg uuid, latency, sender id, recipient id
 	    outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< msg->getSender()->getNodeId() <<", "<<node->getNodeId() <<endl;
 	  }
