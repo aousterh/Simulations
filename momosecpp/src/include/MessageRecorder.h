@@ -21,6 +21,7 @@ class MessageRecorder: public DataRecorder
   string outputFilePath;
   fstream outputFile;	
   bool compressOutput;
+  int num_adversaries;
 	
  public:
 	MessageRecorder();

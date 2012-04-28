@@ -31,6 +31,7 @@ class MessageNode: public Node
              // be friends with (approximately)
   int numNodes;
   node_type type;  // collaborator or adversary?
+  vector<MessageData*> *temp_messages;
 
  public:
   int *trust_distances;  // an array storing trust distances to all other nodes
@@ -57,6 +58,8 @@ class MessageNode: public Node
   node_type getType();
   double getP();
   void createNewMessage();
+  void assignTempMessages(vector<MessageData*> *temp_messages);
+  void mergeMessages();
 };
 
 #endif /*MESSAGENODE_H_*/

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <algorithm>
 
 #include "MessageData.h"
 #include "MessageNode.h"
@@ -16,12 +17,11 @@ MessageNode::MessageNode(Point2D pos, const float &radius, int nodeId, SimTime *
   this->nextMessageId = 0;
   this->MAX_MESSAGES = INT_MAX;  // TODO: make this larger, small is good for debugging
   this->trust_distances = NULL;  // must be initialized by calling function
+  this->temp_messages = NULL;
 
   messages = new vector<long>();
   message_map = new map<long, MessageData*>();
 
-  // generate one message, created now, at the start
-  //  createNewMessage();
 }
 
 MessageNode::~MessageNode(){}
@@ -45,6 +45,9 @@ void MessageNode::createNewMessage()
 
 void MessageNode::insertMessage(MessageData *msg, float latency)
 {
+  // inserts a msg into necessary data structures - assumes that msg's uuid
+  // isn't alreay in the messages map
+
   messages->push_back(msg->getUuid());
   message_map->insert(make_pair(msg->getUuid(), msg));
   return;
@@ -96,49 +99,84 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num, bool u
   // send the most recent msg_exchange_num messages
   // first send messages from your own friends (in order received)
   // then send msgs from adversaries if you can still send more
-  vector<MessageData*> msgs_to_send; 
-  //printf("sending msgs, %d -> %d\n", this->getNodeId(), that->getNodeId());
+  vector<MessageData*> *that_temp_msgs = new vector<MessageData*>();
   int sent = 0;
-  vector<long>::reverse_iterator rit = messages->rbegin();
   // iterate in reverse order to examine newest first
   // start by sending messages from friends
-  while (rit < messages->rend() && sent < msg_exchange_num)
+  for (int i = messages->size() - 1; i >= 0; i--)
     {
-      long uuid = (long) *(rit++);
+      if (sent == msg_exchange_num)
+	break;
+
+      long uuid = (*messages)[i];
+
       MessageData *msg = (MessageData*) (*message_map)[uuid];
       MessageNode *sender = msg->getSender();
       // printf("%d, %d\n", uuid, sender->getNodeId());
       if (this->trustDistance(sender) != -1 || !use_friendships)
 	{
-	  msgs_to_send.push_back(msg);
+	  that_temp_msgs->push_back(msg);
 	  sent++;
 	}
+
     }
+
 
   if (this->type != ADVERSARY && use_friendships)
     {
       // send msgs from adversaries if there is leftover capacity
-      while (rit < messages->rend() && sent < msg_exchange_num)
+      for (int i = messages->size() - 1; i >= 0; i--)
 	{
-	  long uuid = (long) *(rit++);
+	  if (sent == msg_exchange_num)
+	    break;
+	  
+	  long uuid = (*messages)[i];
+	  
 	  MessageData *msg = (MessageData*) (*message_map)[uuid];
 	  MessageNode *sender = msg->getSender();
-	  if (this->trustDistance(sender) == -1)
+	  // printf("%d, %d\n", uuid, sender->getNodeId());
+	  if (this->trustDistance(sender) == -1)  // TODO: change this if you vary probabilities!
 	    {
-	      msgs_to_send.push_back(msg);
+	      that_temp_msgs->push_back(msg);
 	      sent++;
 	    }
+	  
 	}
     }
 
-  // send all msgs in reverse order so that their importance order is preserved
-  for (int i = msgs_to_send.size() - 1; i >= 0; i--)
-    {
-      MessageData *msg = (MessageData *) msgs_to_send[i];
-      that->ReceiveMessage(msg);
-      //      printf("sending: %d, %d -> %d\n", msg->getUuid(), this->getNodeId(), that->getNodeId());
-    }
+  // assign messages to "that" to receive at the end of the timestep
+  that->assignTempMessages(that_temp_msgs);
+}
 
+void MessageNode::assignTempMessages(vector<MessageData*> *new_temp_messages)
+{
+  if (temp_messages == NULL)
+    temp_messages = new vector<MessageData*>(); 
+
+  // add all msgs to the end of the list
+  for (int i = 0; i < new_temp_messages->size(); i++)
+    {
+      MessageData *msg = (MessageData*) (*new_temp_messages)[i];
+      temp_messages->push_back(msg);
+    }
+}
+
+void MessageNode::mergeMessages()
+{
+  if (temp_messages != NULL)
+    {
+      // shuffle order of all msgs so that no sender is priortized
+      random_shuffle(temp_messages->begin(), temp_messages->end());
+
+      //     for (int i = 0; i < temp_messages->size(); i++)
+      for (int i = temp_messages->size() - 1; i > 0; i--)
+	{
+	  MessageData *msg = (MessageData *) (*temp_messages)[i];
+	  this->ReceiveMessage(msg);
+	} 
+      delete temp_messages;
+      temp_messages = NULL;
+    }
 }
 
 void MessageNode::ReceiveMessage(MessageData *msg)
@@ -148,25 +186,22 @@ void MessageNode::ReceiveMessage(MessageData *msg)
   // if msg has been received before, remove it from its old place in the list
   if (this->hasReceivedMessage(msg->getUuid()))
     {
-      int i = messages->size() - 1;
-      vector<long>::reverse_iterator rit = messages->rbegin();
-      while (rit < messages->rend())
+      for (int i = messages->size() - 1; i >= 0; i--)
 	{
-	  long uuid = (long) *(rit++);
+	  long uuid = (*messages)[i];
 	  if (uuid == msg->getUuid())
 	    {
 	      messages->erase(messages->begin() + i);
 	      break;
 	    }
-	  
-	  i--;
 	}
     }
   // add msg to front of list
-  float latency = simTime->getTime() - msg->getCreationTime(); 
+  float latency = simTime->getTime() - msg->getCreationTime();
   MessageData *newMsg = new MessageData(msg->getUuid(), msg->getSender(), latency,
 					msg->getCreationTime(), false);
   insertMessage(newMsg, latency);
+  
 }
 
 bool MessageNode::hasReceivedMessage(long uuid)

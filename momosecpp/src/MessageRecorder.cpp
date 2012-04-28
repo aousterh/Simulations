@@ -5,7 +5,7 @@
 #include"MessageNode.h"
 #include "Utils.h"
 
-#include<map>
+#include <map>
 #include <stdlib.h>
 
 MessageRecorder::MessageRecorder(): outputFile()
@@ -79,17 +79,17 @@ void MessageRecorder::writeStaticInfo(SimTime *simTime, Scenario *scenario)
   
 void MessageRecorder::writeBaseNode() 
 {
-  int adversaries = 0;
+  num_adversaries = 0;
   vector<Node*>::iterator it;
   for(it = nodes->begin(); it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode*) (*it);
       if (node->getType() == ADVERSARY)
-	adversaries++;
+	num_adversaries++;
     }
 
   // write the number of nodes
-  outputFile<<"Num nodes, "<<nodes->size()<<", "<< adversaries<<endl;
+  outputFile<<"Num nodes, "<<nodes->size()<<", "<< num_adversaries<<endl;
   
 } // end writeBaseNode
  
@@ -131,6 +131,7 @@ void MessageRecorder::writeMessageInfo()
 
   float max_creation_time = 0;
   vector<Node*>::iterator it;
+  // calculate the max msg creation time
   for (it = nodes->begin(); it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode *) *it;
@@ -148,23 +149,23 @@ void MessageRecorder::writeMessageInfo()
   float min_time = 0.2 * max_creation_time;
   float max_time = 0.8 * max_creation_time;
 
-  for (it = nodes->begin(); it != nodes->end(); it++)
+  // only care about messages received by collaborators
+  for (it = nodes->begin() + num_adversaries; it != nodes->end(); it++)
     {
       MessageNode *node = (MessageNode *) *it;
-      
+ 
       map<long, MessageData*> *message_map = node->getMessageMap();
       map<long, MessageData*>::iterator map_it;
       for (map_it = message_map->begin(); map_it != message_map->end(); map_it++)
 	{
 	  MessageData *msg = (*map_it).second;
-	  	  // record this msg if it was not sent by this node
+	  // record this msg if it was not sent by this node
 	  if (!msg->wasOutgoing() && (msg->getCreationTime() > min_time &&
 				      msg->getCreationTime() < max_time)) {
 	    MessageNode *sender = msg->getSender();
 	    // output the msg uuid, latency, sender id, recipient id
 	    outputFile<<msg->getUuid()<<", "<< msg->getLatency() <<", "<< msg->getSender()->getNodeId() <<", "<<node->getNodeId() <<endl;
 	  }
-
 	}
 
     }

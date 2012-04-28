@@ -55,19 +55,11 @@ void MessageModel::setup(Scenario *scenario, SimTime *simTime)
       newNode->setAntennaRadius(antennaRadius);
       nodes.push_back(newNode);
       // the first num_adversaries are adversaries, rest are collaborators
-     
+
       if (i < num_adversaries)
-	{
 	  newNode->setType(ADVERSARY);
-	  /* // adversaries start with 5 messages - make this configurable!!! start fixed
-	  for (int i = 0; i < 5; i++)
-	  newNode->createNewMessage();*/
-	}
       else
-	{
 	  newNode->setType(COLLABORATOR);
-	  //  newNode->createNewMessage();
-	}
       newNode->initFriendships(numNodes, num_adversaries);
     }
 
@@ -128,7 +120,6 @@ void MessageModel::think(SimTime *simTime)
 {
   // TODO: any node could be receiving from many others at once, although
   // each only sends to one other node at once
-  // double ADVERSARY_MSG_CREATION_PROBABILITY = 0.1;
 
   // DYNAMIC CREATION OF MESSAGES
 
@@ -145,27 +136,6 @@ void MessageModel::think(SimTime *simTime)
 	}
     }
  
-  /*  if (t == 500)
-    {
-      // have normal nodes create their messages if at t=100
-      for (int i = numNodes * percent_adversaries; i < numNodes; i++)
-	{
-	  MessageNode *node = (MessageNode *) nodes[i];
-	  node->createNewMessage();
-	}
-	}*/
-  /*  for (int i = 0; i < numNodes; i++)
-    {
-      MessageNode *n1 = (MessageNode *) nodes[i];
-      printf("Node %d: %f %f\n", n1->getNodeId(), n1->getPosition().x, n1->getPosition().y);
-    }
-    printf("\n");*/
-
-  /*  static int t = 0;
-  printf("TIMESTEP: %d\n", t);
-  t++;*/
-
-
   // push to one node at a time, selected randomly from those within range
   for (int i = 0; i < numNodes; i++)
     {
@@ -175,7 +145,7 @@ void MessageModel::think(SimTime *simTime)
       // which node to exchange with
       vector<Node*> potentials;
       for (int j = 0; j < numNodes; j++)
-	{
+      {
 	  if (j != i)
 	    {
 	      MessageNode *node2 = (MessageNode*) nodes[j];
@@ -185,10 +155,7 @@ void MessageModel::think(SimTime *simTime)
 	    }
 	}
 
-      // TODO: messages could travel many hops in one timestep if
-      // there are big groups of connected components . . . does this happen?
       // choose a random node to send messages to - push model
-
       // only push messages to one node for now
       if (potentials.size() > 0)
 	{
@@ -197,6 +164,13 @@ void MessageModel::think(SimTime *simTime)
 	  node1->pushMessagesTo(node2, msg_exchange_num, use_friendships);  // send messages to node2
 	}
     }
+
+  for (int i = 0; i < numNodes; i++)
+    {
+      MessageNode *node = (MessageNode*) nodes[i];
+      node->mergeMessages();
+    }
+
 }
 
 /*void MessageModel::computeTrustDistances()
