@@ -45,44 +45,16 @@ for row in reader:
 
 plot_data_sets = [collaborators, adversaries]
 completion_lists = []
-
+print len(plot_data_sets) + 1
 
 for data_set in plot_data_sets:
-  latency_lists = {}
   data_list = data_set
   latency = []
-  uuid = set()
   for t in data_list:
-    uuid.add(t[0])
     latency.append(t[1])
-    if t[0] in latency_lists:
-      lat_list = latency_lists[t[0]]
-      lat_list.append(t[1])
-      latency_lists[t[0]] = lat_list
-    else:
-      latency_lists[t[0]] = [t[1]]
 
-  # generate a list of latency lists where each latency list is
-  # all the latencies for one msg
-  x_lists = latency_lists.values()
-
-  # what percentage of nodes received each msg
-  num_completed = [len(x) for x in x_lists]
-  completion_lists.append(num_completed)
-
-
-# print out completion percentage CDF data
-x_data = [sorted(list(set(x))) for x in completion_lists]
-
-
-for i in range(len(x_data)):
-  if (len(x_data[i]) > 1):
-    for j in range(len(x_data[i])):
-      print x_data[i][j],
-      if j != len(x_data[i]) - 1:
-        print ",",
-    print
-  else:
-    print ""
-    print ""
-
+  for i in range(len(latency)):
+    print latency[i],
+    print ",",
+  print
+  

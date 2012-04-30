@@ -113,7 +113,7 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num, bool u
       MessageData *msg = (MessageData*) (*message_map)[uuid];
       MessageNode *sender = msg->getSender();
       // printf("%d, %d\n", uuid, sender->getNodeId());
-      if (this->trustDistance(sender) != -1 || !use_friendships)
+      if (this->trustDistance(sender) != -1 || (this->type == COLLABORATOR && !use_friendships))
 	{
 	  that_temp_msgs->push_back(msg);
 	  sent++;
@@ -122,7 +122,7 @@ void MessageNode::pushMessagesTo(MessageNode *that, int msg_exchange_num, bool u
     }
 
 
-  if (this->type != ADVERSARY && use_friendships)
+  if (this->type == COLLABORATOR && use_friendships)
     {
       // send msgs from adversaries if there is leftover capacity
       for (int i = messages->size() - 1; i >= 0; i--)
