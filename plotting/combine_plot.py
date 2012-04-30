@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import csv
+from pylab import *
+import pylab as P
 
 """
 This script reads in data from a csv file (current in the momosecpp/plotting/text.csv file).
@@ -28,49 +30,45 @@ row0 = reader2.next()
 #column = column.tolist()
 num_groups = int(row0[0])
 lines_per_group = 5   # TODO: don't hard code this
-
+x_max = 0
+sub = fig1.add_subplot(111)
 readers = [reader1, reader2]
 for group in range(num_groups):
-  sub = fig1.add_subplot(num_groups, 1, group + 1)
-  x_max = 0
-
   # read in first line to figure out how many real lines there are
   row1 = reader1.next()
   row2 = reader2.next()
   actual_lines = int(row1[0])
 
-  for i in range(actual_lines):
-    for j in range(len(readers)):
+  for j in range(len(readers)):
+    for i in range(actual_lines):
       reader = readers[j]
       x_data = reader.next()
       y_data = reader.next()
       x_data = [int(x) for x in x_data]
       y_data = [float(y) for y in y_data]
 
-      if i == 2 or group == 2:
-        sub.plot(x_data, y_data, '-', label=j)
-      try:
-        if max(x_data) > x_max:
-          x_max = max(x_data)
-      except:
-        x_max = x_max
+      if group == 0 and (i == 2 or i == 3):
+        if j == 0:
+          sub.plot(x_data, y_data, '-')
+        if j == 1:
+          sub.plot(x_data, y_data, '--')
+      if max(x_data) > x_max:
+        x_max = max(x_data)
 
   if group < 2:
-    leg = sub.legend(('without trust', 'with trust'), loc=4)
+    leg = sub.legend(('without trust - 50%', 'without trust - 90%', 'with trust - 50%', 'with trust - 90%'), loc=4)
     for i in range(lines_per_group - actual_lines):
       for reader in readers:
         reader.next();
         reader.next();
-  else:
-    leg = sub.legend(('c without trust', 'a without trust', 'c with trust', 'a with trust'), loc=4)
 
-  if len(sys.argv) > 3 and group < 2:
-    x_max = int(sys.argv[3])
-  sub.set_xlim(0, x_max)
-  sub.set_ylim(0, 1)
+if len(sys.argv) > 3:
+  x_max = int(sys.argv[3])
+sub.set_xlim(0, x_max)
+sub.set_ylim(0, 1)
 
-  if group < 2:
-    sub.set_xlabel("Latency (timesteps)")
-    sub.set_ylabel("Percent of Messages")
+sub.set_xlabel("Latency (timesteps)")
+sub.set_ylabel("Percent of Messages Received")
+title("Latency to Reach a Percentage of Receiving Collaborators")
 
 plt.show()
